@@ -159,7 +159,13 @@
     box-shadow: var(--shadow-card);
     padding: 28px 32px;
     margin-bottom: 24px;
-    max-width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+    gap: 36px;
+    align-items: start;
+  }
+  .intro-main {
+    min-width: 0;
   }
   .intro .intro-eyebrow {
     font-family: var(--mono);
@@ -167,7 +173,7 @@
     text-transform: uppercase;
     letter-spacing: 0.18em;
     color: var(--mode-accent);
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     font-weight: 600;
     transition: color 0.3s;
   }
@@ -177,16 +183,16 @@
     line-height: 1.65;
     color: var(--ink);
     margin: 0 0 14px;
-    max-width: 76ch;
   }
   .intro p.lede:last-of-type { margin-bottom: 0; }
   .intro .author-note {
-    margin: 22px 0 0;
-    padding: 16px 20px 16px 22px;
+    margin: 0;
+    padding: 18px 22px;
     border-left: 2px solid var(--mode-accent);
     background: var(--mode-bg);
     border-radius: 0 3px 3px 0;
     transition: all 0.3s;
+    align-self: stretch;
   }
   .intro .author-note .note-label {
     font-family: var(--sans);
@@ -195,7 +201,7 @@
     letter-spacing: 0.18em;
     color: var(--mode-accent);
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     display: block;
     transition: color 0.3s;
   }
@@ -206,12 +212,17 @@
     line-height: 1.65;
     color: var(--ink);
     margin: 0;
-    max-width: 70ch;
+  }
+  @media (max-width: 880px) {
+    .intro {
+      grid-template-columns: 1fr;
+      gap: 22px;
+    }
   }
   @media (max-width: 600px) {
     .intro { padding: 22px 22px; }
     .intro p.lede { font-size: 15px; }
-    .intro .author-note { padding: 14px 16px 14px 18px; }
+    .intro .author-note { padding: 16px 18px; }
   }
 
   /* ===== Mode selector ===== */
@@ -1154,13 +1165,15 @@
 
   <!-- Intro -->
   <section class="intro" aria-label="About this tool">
-    <div class="intro-eyebrow">About this tool</div>
-    <p class="lede">
-      The IRB Triage is a self-contained, offline tool for thinking clearly about research ethics review. Pick a role below, answer the questions, and the tool returns a structured assessment: the documents you will likely need, the red flags worth surfacing, the questions worth raising, and the timelines to plan for.
-    </p>
-    <p class="lede">
-      Four working modes cover the full lifecycle of a study. A researcher figuring out which review track applies. A committee member (IRB, REC, HREC, IEC) working through the review criteria. A peer reviewer or editor checking whether a manuscript&rsquo;s ethics statement holds up. A principal investigator with an approved study deciding whether a change needs an amendment, a prompt report, or both. The recommendation engine draws on the Common Rule, ICMR guidelines, TCPS 2, the National Statement, the NHC and MOST measures, the CEP/CONEP system, GDPR, the Declaration of Helsinki, ICMJE, and COPE, and translates them into plain working language.
-    </p>
+    <div class="intro-main">
+      <div class="intro-eyebrow">About this tool</div>
+      <p class="lede">
+        The IRB Triage is a self-contained, offline tool for thinking clearly about research ethics review. Pick a role below, answer the questions, and the tool returns a structured assessment: the documents you will likely need, the red flags worth surfacing, the questions worth raising, and the timelines to plan for.
+      </p>
+      <p class="lede">
+        Four working modes cover the full lifecycle of a study. A researcher figuring out which review track applies. A committee member (IRB, REC, HREC, IEC) working through the review criteria. A peer reviewer or editor checking whether a manuscript&rsquo;s ethics statement holds up. A principal investigator with an approved study deciding whether a change needs an amendment, a prompt report, or both. The recommendation engine draws on the Common Rule, ICMR guidelines, TCPS 2, the National Statement, the NHC and MOST measures, the CEP/CONEP system, GDPR, the Declaration of Helsinki, ICMJE, and COPE, and translates them into plain working language.
+      </p>
+    </div>
     <div class="author-note">
       <span class="note-label">A note from the author</span>
       <p>
