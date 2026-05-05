@@ -1,0 +1,2734 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The IRB Triage &middot; A Self-Assessment for Research Ethics Review</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  :root {
+    --bg:           #edf0eb;
+    --bg-tint:      #e2e7df;
+    --card:         #ffffff;
+    --card-soft:    #f7f9f4;
+    --ink:          #0e1c1a;
+    --ink-soft:     #4d5450;
+    --ink-faint:    #8a928d;
+    --rule:         #d4d8d2;
+    --rule-soft:    #e6e9e2;
+    --teal:         #1c4d42;
+    --teal-soft:    #4a7d72;
+    --teal-bg:      #e6efe9;
+    --orange:       #b85020;
+    --orange-bg:    #f7e4d8;
+    --amber:        #a37f1e;
+    --amber-bg:     #f3ead0;
+    --forest:       #2d6e4f;
+    --forest-bg:    #d9e8df;
+    --rust:         #8b2a1c;
+    --rust-bg:      #f1d8d2;
+    --indigo:       #2c3e75;
+    --indigo-bg:    #e2e5ee;
+    --shadow-card:  0 1px 0 rgba(255,255,255,0.6) inset, 0 1px 2px rgba(15,30,28,0.04), 0 8px 24px rgba(15,30,28,0.05);
+    --sans:   ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --serif:  "Charter", "Bitstream Charter", "Sitka Text", Cambria, Georgia, serif;
+    --mono:   ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+    --mode-accent: var(--teal);
+    --mode-bg:     var(--teal-bg);
+  }
+  body[data-mode="reviewer"]     { --mode-accent: var(--amber);  --mode-bg: var(--amber-bg); }
+  body[data-mode="manuscript"]   { --mode-accent: var(--indigo); --mode-bg: var(--indigo-bg); }
+  body[data-mode="postapproval"] { --mode-accent: var(--orange); --mode-bg: var(--orange-bg); }
+
+  body {
+    font-family: var(--sans);
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.55;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image: linear-gradient(to bottom, transparent 0, transparent 39px, rgba(15,30,28,0.025) 39px, rgba(15,30,28,0.025) 40px);
+    background-size: 40px 40px;
+    z-index: 0;
+  }
+  .wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 40px 28px 88px;
+  }
+
+  /* ===== Masthead ===== */
+  .masthead {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 18px;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 22px;
+  }
+  .seal {
+    width: 56px; height: 56px;
+    border: 1.5px solid var(--mode-accent);
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    color: var(--mode-accent);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    font-weight: 600;
+    background: var(--card);
+    position: relative;
+    transition: all 0.3s;
+  }
+  .seal::after {
+    content: "";
+    position: absolute;
+    inset: 4px;
+    border: 1px solid var(--mode-accent);
+    border-radius: 50%;
+    opacity: 0.4;
+  }
+  .masthead h1 {
+    font-family: var(--sans);
+    font-size: clamp(22px, 3.4vw, 32px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin: 0;
+    color: var(--ink);
+  }
+  .masthead h1 .sub {
+    display: block;
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 0.62em;
+    color: var(--mode-accent);
+    margin-top: 4px;
+    transition: color 0.3s;
+  }
+  .masthead .meta {
+    text-align: right;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-faint);
+    line-height: 1.5;
+  }
+  .masthead .meta button {
+    margin-top: 6px;
+    background: none;
+    border: 1px solid var(--rule);
+    color: var(--ink-soft);
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 4px 8px;
+    border-radius: 2px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: all 0.15s;
+  }
+  .masthead .meta button:hover {
+    border-color: var(--mode-accent);
+    color: var(--mode-accent);
+  }
+  @media (max-width: 640px) {
+    .masthead { grid-template-columns: auto 1fr; }
+    .masthead .meta { display: none; }
+  }
+
+  /* ===== Intro card ===== */
+  .intro {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    box-shadow: var(--shadow-card);
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    max-width: 100%;
+  }
+  .intro .intro-eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--mode-accent);
+    margin-bottom: 10px;
+    font-weight: 600;
+    transition: color 0.3s;
+  }
+  .intro p.lede {
+    font-family: var(--sans);
+    font-size: 15.5px;
+    line-height: 1.65;
+    color: var(--ink);
+    margin: 0 0 14px;
+    max-width: 76ch;
+  }
+  .intro p.lede:last-of-type { margin-bottom: 0; }
+  .intro .author-note {
+    margin: 22px 0 0;
+    padding: 16px 20px 16px 22px;
+    border-left: 2px solid var(--mode-accent);
+    background: var(--mode-bg);
+    border-radius: 0 3px 3px 0;
+    transition: all 0.3s;
+  }
+  .intro .author-note .note-label {
+    font-family: var(--sans);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--mode-accent);
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: block;
+    transition: color 0.3s;
+  }
+  .intro .author-note p {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--ink);
+    margin: 0;
+    max-width: 70ch;
+  }
+  @media (max-width: 600px) {
+    .intro { padding: 22px 22px; }
+    .intro p.lede { font-size: 15px; }
+    .intro .author-note { padding: 14px 16px 14px 18px; }
+  }
+
+  /* ===== Mode selector ===== */
+  .modes {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 920px) { .modes { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 540px) { .modes { grid-template-columns: 1fr; } }
+
+  .mode-card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: left;
+    box-shadow: var(--shadow-card);
+    font-family: var(--sans);
+  }
+  .mode-card:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 1px 0 #fff inset, 0 4px 12px rgba(15,30,28,0.08);
+  }
+  .mode-card .mode-num {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+  }
+  .mode-card .mode-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 4px 0 4px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .mode-card .mode-desc {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+  .mode-card[data-active="true"][data-mode="researcher"]    { border-color: var(--teal);    background: var(--teal-bg); }
+  .mode-card[data-active="true"][data-mode="researcher"] .mode-num { color: var(--teal); }
+  .mode-card[data-active="true"][data-mode="reviewer"]      { border-color: var(--amber);   background: var(--amber-bg); }
+  .mode-card[data-active="true"][data-mode="reviewer"] .mode-num { color: var(--amber); }
+  .mode-card[data-active="true"][data-mode="manuscript"]    { border-color: var(--indigo);  background: var(--indigo-bg); }
+  .mode-card[data-active="true"][data-mode="manuscript"] .mode-num { color: var(--indigo); }
+  .mode-card[data-active="true"][data-mode="postapproval"]  { border-color: var(--orange);  background: var(--orange-bg); }
+  .mode-card[data-active="true"][data-mode="postapproval"] .mode-num { color: var(--orange); }
+
+  .deck {
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    max-width: 72ch;
+    margin: 0 0 28px;
+  }
+  .deck strong { color: var(--ink); font-weight: 600; }
+
+  /* ===== Layout ===== */
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+    gap: 32px;
+    align-items: start;
+  }
+  @media (max-width: 920px) { .grid { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    box-shadow: var(--shadow-card);
+    padding: 26px 30px;
+  }
+
+  .qsection {
+    margin: 0;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .qsection:first-child { padding-top: 0; }
+  .qsection:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .qsection-head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 4px;
+  }
+  .qnum {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--mode-accent);
+    background: var(--mode-bg);
+    padding: 4px 8px;
+    border-radius: 2px;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+  .qsection h2 {
+    font-family: var(--sans);
+    font-size: 19px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+  .qsection .qhint {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 6px 0 0 50px;
+    max-width: 60ch;
+    line-height: 1.5;
+  }
+  @media (max-width: 600px) { .qsection .qhint { margin-left: 0; } }
+
+  .opts {
+    display: grid;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .opts.cols-2 { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 720px) { .opts.cols-2 { grid-template-columns: 1fr; } }
+
+  .opt {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 12px;
+    align-items: start;
+    padding: 12px 14px;
+    background: var(--card-soft);
+    border: 1px solid var(--rule-soft);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.12s ease;
+    user-select: none;
+  }
+  .opt:hover {
+    background: var(--mode-bg);
+    border-color: var(--mode-accent);
+  }
+  .opt input {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px; height: 18px;
+    margin: 2px 0 0;
+    border: 1.5px solid var(--ink-faint);
+    background: var(--card);
+    cursor: pointer;
+    transition: all 0.12s;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .opt input[type="radio"] { border-radius: 50%; }
+  .opt input[type="checkbox"] { border-radius: 2px; }
+  .opt input:checked {
+    border-color: var(--mode-accent);
+    background: var(--mode-accent);
+  }
+  .opt input[type="radio"]:checked::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    background: var(--card);
+    border-radius: 50%;
+  }
+  .opt input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    left: 4px;
+    top: 0px;
+    width: 5px;
+    height: 10px;
+    border: solid var(--card);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  .opt:has(input:checked) {
+    background: var(--mode-bg);
+    border-color: var(--mode-accent);
+  }
+  .opt .opt-label {
+    font-size: 14.5px;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  .opt .opt-label .desc {
+    display: block;
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+  .opt .opt-label .tag {
+    display: inline-block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    padding: 1px 6px;
+    border-radius: 2px;
+    margin-left: 6px;
+    vertical-align: 2px;
+    font-weight: 600;
+  }
+  .tag.flag-orange { background: var(--orange-bg); color: var(--orange); }
+  .tag.flag-amber  { background: var(--amber-bg);  color: var(--amber); }
+  .tag.flag-rust   { background: var(--rust-bg);   color: var(--rust); }
+  .tag.flag-indigo { background: var(--indigo-bg); color: var(--indigo); }
+
+  select {
+    font-family: var(--sans);
+    font-size: 15px;
+    color: var(--ink);
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 10px 36px 10px 14px;
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='none' stroke='%231c4d42' stroke-width='1.6' d='M1 1l5 5 5-5'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    cursor: pointer;
+  }
+  select:focus { outline: none; border-color: var(--mode-accent); }
+
+  details.expand {
+    margin-top: 12px;
+    border-top: 1px dashed var(--rule);
+    padding-top: 10px;
+  }
+  details.expand summary {
+    list-style: none;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--mode-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    user-select: none;
+    font-weight: 600;
+  }
+  details.expand summary::-webkit-details-marker { display: none; }
+  details.expand summary::before {
+    content: "+ ";
+    color: var(--mode-accent);
+    font-weight: 700;
+  }
+  details.expand[open] summary::before { content: "− "; }
+  details.expand .body {
+    margin-top: 10px;
+    font-family: var(--serif);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  details.expand .body p { margin: 6px 0; }
+
+  /* ===== Verdict panel ===== */
+  .verdict { position: sticky; top: 24px; }
+  .verdict-card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 22px 24px;
+    box-shadow: var(--shadow-card);
+  }
+  .verdict-tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 14px;
+  }
+  .verdict-tag::before, .verdict-tag::after {
+    content: "";
+    flex: 1;
+    border-top: 1px solid var(--rule);
+  }
+  .verdict-state { text-align: center; }
+  .verdict-badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
+  .verdict-badge.idle      { background: var(--bg-tint);    color: var(--ink-soft); }
+  .verdict-badge.partial   { background: var(--amber-bg);   color: var(--amber); }
+  .verdict-badge.exempt    { background: var(--forest-bg);  color: var(--forest); }
+  .verdict-badge.expedited { background: var(--teal-bg);    color: var(--teal); }
+  .verdict-badge.fullboard { background: var(--orange-bg);  color: var(--orange); }
+  .verdict-badge.notneeded { background: var(--forest-bg);  color: var(--forest); }
+  .verdict-badge.special   { background: var(--rust-bg);    color: var(--rust); }
+  .verdict-badge.amend_minor { background: var(--forest-bg); color: var(--forest); }
+  .verdict-badge.amend_major { background: var(--orange-bg); color: var(--orange); }
+  .verdict-badge.report_now  { background: var(--rust-bg); color: var(--rust); }
+  .verdict-headline {
+    font-family: var(--sans);
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.3;
+    margin: 0 0 8px;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .verdict-sub {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin: 0;
+    line-height: 1.5;
+  }
+  .verdict-section {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px solid var(--rule-soft);
+  }
+  .verdict-section h4 {
+    font-family: var(--sans);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-faint);
+    margin: 0 0 8px;
+    font-weight: 600;
+  }
+  .verdict-list { list-style: none; padding: 0; margin: 0; }
+  .verdict-list li {
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--ink);
+    padding: 5px 0;
+    display: grid;
+    grid-template-columns: 16px 1fr;
+    gap: 8px;
+    align-items: start;
+  }
+  .verdict-list li::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: var(--mode-accent);
+    border-radius: 50%;
+    margin-top: 7px;
+  }
+  .verdict-list li.flag::before { background: var(--orange); }
+  .verdict-list li.note::before { background: var(--amber); }
+  .verdict-list li.good::before { background: var(--forest); }
+  .verdict-meter {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 12px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .verdict-meter .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--rule);
+  }
+  .verdict-meter .dot.lit { background: var(--mode-accent); }
+  .verdict-meter .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-left: 8px;
+  }
+
+  /* ===== Self-audit panel ===== */
+  .audit-card {
+    margin-top: 16px;
+    background: var(--card-soft);
+    border: 1px solid var(--rule-soft);
+    border-radius: 4px;
+    padding: 16px 18px;
+  }
+  .audit-card h4 {
+    font-family: var(--sans);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-faint);
+    margin: 0 0 10px;
+    font-weight: 600;
+  }
+  .audit-bar {
+    display: flex;
+    height: 6px;
+    background: var(--rule);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .audit-bar .fill {
+    height: 100%;
+    background: var(--forest);
+    transition: width 0.3s ease, background 0.3s ease;
+  }
+  .audit-bar .fill.low { background: var(--rust); }
+  .audit-bar .fill.med { background: var(--amber); }
+  .audit-bar .fill.high { background: var(--forest); }
+  .audit-score {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-bottom: 10px;
+  }
+  .audit-score strong {
+    color: var(--ink);
+    font-size: 14px;
+  }
+  .audit-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 12.5px;
+  }
+  .audit-list li {
+    padding: 4px 0;
+    display: grid;
+    grid-template-columns: 16px 1fr;
+    gap: 6px;
+    line-height: 1.4;
+  }
+  .audit-list li::before {
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  .audit-list li.pass::before { content: "✓"; color: var(--forest); }
+  .audit-list li.warn::before { content: "!"; color: var(--amber); }
+  .audit-list li.fail::before { content: "×"; color: var(--rust); }
+
+  /* ===== Report ===== */
+  .report { display: none; margin-top: 32px; }
+  .report.shown { display: block; }
+  .report-card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    box-shadow: var(--shadow-card);
+    padding: 28px 32px;
+  }
+  .report h2 {
+    font-family: var(--sans);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 0 0 6px;
+    color: var(--ink);
+  }
+  .report .deck { margin: 0 0 22px; font-size: 15px; }
+  .report-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 22px;
+  }
+  @media (max-width: 720px) { .report-grid { grid-template-columns: 1fr; } }
+  .report-block {
+    border: 1px solid var(--rule-soft);
+    border-radius: 3px;
+    padding: 16px 18px;
+    background: var(--card-soft);
+  }
+  .report-block h3 {
+    font-family: var(--sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--mode-accent);
+    margin: 0 0 10px;
+    font-weight: 600;
+  }
+  .report-block ul { list-style: none; padding: 0; margin: 0; }
+  .report-block ul li {
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 6px 0;
+    border-bottom: 1px dotted var(--rule);
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    gap: 8px;
+  }
+  .report-block ul li:last-child { border-bottom: none; }
+  .report-block ul li::before {
+    content: "□";
+    color: var(--mode-accent);
+    font-family: var(--mono);
+    font-size: 14px;
+  }
+  .report-block.flags ul li::before { content: "▲"; color: var(--orange); }
+  .report-block.questions ul li::before { content: "?"; color: var(--amber); font-weight: 700; }
+  .report-block.country { grid-column: span 2; background: var(--mode-bg); border-color: var(--mode-accent); }
+  .report-block.country ul li::before { content: "§"; color: var(--mode-accent); }
+  @media (max-width: 720px) { .report-block.country { grid-column: span 1; } }
+
+  /* ===== Toolbar ===== */
+  .toolbar {
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule-soft);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  button.btn {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 9px 16px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.1s;
+    letter-spacing: 0.01em;
+  }
+  button.btn.primary {
+    background: var(--mode-accent);
+    color: var(--card);
+    border: 1px solid var(--mode-accent);
+  }
+  button.btn.primary:hover { filter: brightness(0.9); }
+  button.btn.ghost {
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--rule);
+  }
+  button.btn.ghost:hover { background: var(--bg-tint); }
+  button.btn:active { transform: translateY(1px); }
+
+  .disclaimer {
+    margin-top: 32px;
+    background: var(--amber-bg);
+    border-left: 3px solid var(--amber);
+    padding: 14px 18px;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.55;
+    border-radius: 2px;
+  }
+  .disclaimer .lead {
+    font-family: var(--sans);
+    font-style: normal;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--amber);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  /* ===== Reference shelf ===== */
+  .reference-shelf {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+  }
+  .reference-shelf > h3 {
+    font-family: var(--sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-faint);
+    margin: 0 0 12px;
+    font-weight: 600;
+  }
+  .ref-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+  }
+  .ref-item {
+    background: var(--card);
+    border: 1px solid var(--rule-soft);
+    padding: 14px 16px;
+    border-radius: 3px;
+  }
+  .ref-item .ref-name {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--ink);
+    margin-bottom: 4px;
+    letter-spacing: -0.005em;
+  }
+  .ref-item .ref-cite {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--mode-accent);
+    background: var(--mode-bg);
+    padding: 1px 5px;
+    border-radius: 2px;
+    margin-left: 4px;
+    font-weight: 500;
+  }
+  .ref-item .ref-body {
+    font-family: var(--serif);
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  /* ===== Scenarios with categories ===== */
+  .scenarios {
+    margin-top: 28px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+  }
+  .scenarios > h3 {
+    font-family: var(--sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-faint);
+    margin: 0 0 12px;
+    font-weight: 600;
+  }
+  .scen-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .scen-filter button {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-family: var(--sans);
+    font-size: 11px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition: all 0.12s;
+  }
+  .scen-filter button:hover { border-color: var(--mode-accent); }
+  .scen-filter button.active {
+    background: var(--mode-accent);
+    color: var(--card);
+    border-color: var(--mode-accent);
+  }
+  .scen-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 8px;
+  }
+  .scen-card {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: 11px 13px;
+    text-align: left;
+    cursor: pointer;
+    font-family: var(--sans);
+    transition: all 0.12s;
+  }
+  .scen-card:hover {
+    border-color: var(--mode-accent);
+    background: var(--mode-bg);
+  }
+  .scen-card .t {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--mode-accent);
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+  .scen-card .b {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.35;
+  }
+  .scen-card .cat {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-faint);
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ===== Deficiencies database ===== */
+  .deficiencies {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+  }
+  .deficiencies > h3 {
+    font-family: var(--sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-faint);
+    margin: 0 0 6px;
+    font-weight: 600;
+  }
+  .deficiencies > p {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    margin: 0 0 14px;
+    max-width: 70ch;
+  }
+  .def-search {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .def-search input {
+    font-family: var(--sans);
+    font-size: 14px;
+    padding: 9px 12px;
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    color: var(--ink);
+    background: var(--card);
+  }
+  .def-search input:focus {
+    outline: none;
+    border-color: var(--mode-accent);
+  }
+  .def-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  .def-item {
+    background: var(--card);
+    border: 1px solid var(--rule-soft);
+    border-radius: 3px;
+    padding: 12px 14px;
+    transition: all 0.12s;
+  }
+  .def-item:hover {
+    border-color: var(--mode-accent);
+  }
+  .def-item .def-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-bottom: 6px;
+  }
+  .def-item .def-tags span {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--mode-accent);
+    background: var(--mode-bg);
+    padding: 1px 6px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+  }
+  .def-item .def-title {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ink);
+    margin-bottom: 2px;
+    line-height: 1.3;
+  }
+  .def-item .def-body {
+    font-family: var(--serif);
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+  .def-empty {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink-faint);
+    text-align: center;
+    padding: 24px;
+  }
+
+  /* ===== Glossary ===== */
+  .glossary {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+  }
+  .glossary > h3 {
+    font-family: var(--sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-faint);
+    margin: 0 0 12px;
+    font-weight: 600;
+  }
+  .gloss-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 14px;
+  }
+  .gloss-item {
+    background: var(--card);
+    border: 1px solid var(--rule-soft);
+    padding: 14px 16px;
+    border-radius: 3px;
+  }
+  .gloss-item dt {
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 13.5px;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .gloss-item dt .ab {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--mode-accent);
+    margin-left: 6px;
+    background: var(--mode-bg);
+    padding: 1px 5px;
+    border-radius: 2px;
+    vertical-align: 1px;
+    font-weight: 500;
+  }
+  .gloss-item dd {
+    font-family: var(--serif);
+    font-size: 13.5px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  /* ===== Toast ===== */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--ink);
+    color: var(--card);
+    padding: 10px 18px;
+    border-radius: 3px;
+    font-family: var(--sans);
+    font-size: 13px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    transition: transform 0.25s ease, opacity 0.25s ease;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 100;
+  }
+  .toast.shown {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  footer.colophon {
+    margin-top: 56px;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+    font-size: 11px;
+    color: var(--ink-faint);
+    line-height: 1.7;
+    letter-spacing: 0.02em;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  footer.colophon .credit {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+  footer.colophon .credit a {
+    color: var(--mode-accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+  footer.colophon .credit a:hover {
+    border-bottom-color: var(--mode-accent);
+  }
+
+  @media print {
+    body { background: white; }
+    body::before { display: none; }
+    .verdict, .scenarios, .toolbar, .reference-shelf, .modes, .deficiencies, .glossary { display: none !important; }
+    .grid { grid-template-columns: 1fr; }
+    .card, .report-card { box-shadow: none; border: 1px solid #ccc; }
+    .report.shown { page-break-before: always; }
+  }
+</style>
+</head>
+<body data-mode="researcher">
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="seal" aria-hidden="true">IRB</div>
+    <h1>
+      The IRB Triage
+      <span class="sub">A self-assessment for research ethics review</span>
+    </h1>
+    <div class="meta">
+      Released April 01, 2026<br />
+      Researchers, Reviewers, Editors
+      <button id="shareBtn" type="button" title="Generate a shareable link with current answers">Copy share link</button>
+    </div>
+  </header>
+
+  <!-- Intro -->
+  <section class="intro" aria-label="About this tool">
+    <div class="intro-eyebrow">About this tool</div>
+    <p class="lede">
+      The IRB Triage is a self-contained, offline tool for thinking clearly about research ethics review. Pick a role below, answer the questions, and the tool returns a structured assessment: the documents you will likely need, the red flags worth surfacing, the questions worth raising, and the timelines to plan for.
+    </p>
+    <p class="lede">
+      Four working modes cover the full lifecycle of a study. A researcher figuring out which review track applies. A committee member (IRB, REC, HREC, IEC) working through the review criteria. A peer reviewer or editor checking whether a manuscript&rsquo;s ethics statement holds up. A principal investigator with an approved study deciding whether a change needs an amendment, a prompt report, or both. The recommendation engine draws on the Common Rule, ICMR guidelines, TCPS 2, the National Statement, the NHC and MOST measures, the CEP/CONEP system, GDPR, the Declaration of Helsinki, ICMJE, and COPE, and translates them into plain working language.
+    </p>
+    <div class="author-note">
+      <span class="note-label">A note from the author</span>
+      <p>
+        Much of my work has been at institutions that serve communities the rest of academia tends to underestimate. Researchers there face the same hard questions as their better-resourced peers, with thinner support and longer waits. The reviewers and editors evaluating their work sometimes lack the specialised training that makes a quick read possible. This tool is for both. It will not replace an ethics committee, and does not pretend to. What it tries to do is make the conversation that produces good ethics review a little more accessible, a little better structured, and a little less intimidating. If it spares one careful researcher a misstep, or one good study an avoidable delay, it has earned its keep.
+      </p>
+    </div>
+  </section>
+
+  <!-- Mode selector -->
+  <div class="modes" role="tablist" aria-label="Audience mode">
+    <button class="mode-card" type="button" role="tab" data-mode="researcher" data-active="true">
+      <div class="mode-num">Mode 01</div>
+      <div class="mode-title">I&rsquo;m a researcher</div>
+      <div class="mode-desc">Figure out which review track applies and what to prepare.</div>
+    </button>
+    <button class="mode-card" type="button" role="tab" data-mode="reviewer">
+      <div class="mode-num">Mode 02</div>
+      <div class="mode-title">I&rsquo;m on an IRB</div>
+      <div class="mode-desc">Get a structured review checklist and red-flag prompts.</div>
+    </button>
+    <button class="mode-card" type="button" role="tab" data-mode="manuscript">
+      <div class="mode-num">Mode 03</div>
+      <div class="mode-title">I&rsquo;m reviewing a manuscript</div>
+      <div class="mode-desc">Check whether the ethics statement is adequate.</div>
+    </button>
+    <button class="mode-card" type="button" role="tab" data-mode="postapproval">
+      <div class="mode-num">Mode 04</div>
+      <div class="mode-title">My study is approved</div>
+      <div class="mode-desc">Decide whether a change needs an amendment or report.</div>
+    </button>
+  </div>
+
+  <p class="deck" id="modeDeck">
+    Most researchers don&rsquo;t need a verdict; they need to know <strong>which review track they&rsquo;re heading toward</strong> so they can plan timelines and prepare documents. Answer the questions below. The right panel narrows in as you go. The final report includes likely documents, red flags, and questions to bring to the IRB office.
+  </p>
+
+  <div class="grid">
+
+    <main>
+
+      <!-- ===== Pre-approval card (Q1-Q8) ===== -->
+      <div class="card" id="preApprovalCard">
+
+        <!-- Q1 -->
+        <section class="qsection">
+          <div class="qsection-head"><span class="qnum">Q1</span><h2>Where is the institution, and where will the work happen?</h2></div>
+          <p class="qhint">Each country has its own framework. The recommendation engine adjusts language and citations based on this answer.</p>
+          <label style="display:block; font-size:12px; text-transform:uppercase; letter-spacing:0.12em; color:var(--ink-soft); margin: 14px 0 6px; font-weight: 600;">Primary jurisdiction</label>
+          <select id="jurisdiction" aria-label="Jurisdiction">
+            <option value="us">United States &mdash; Common Rule (45 CFR 46), FDA 21 CFR 50/56</option>
+            <option value="uk">United Kingdom &mdash; HRA, university RECs</option>
+            <option value="eu">European Union (general) &mdash; national frameworks plus GDPR</option>
+            <option value="ca">Canada &mdash; Tri-Council Policy Statement (TCPS 2, 2022)</option>
+            <option value="au">Australia &mdash; National Statement on Ethical Conduct, HRECs</option>
+            <option value="in">India &mdash; ICMR National Ethical Guidelines (2017), IECs</option>
+            <option value="cn">China &mdash; NHC Measures (2023), MOST Trial Measures (Dec 2023)</option>
+            <option value="br">Brazil &mdash; CEP/CONEP, Plataforma Brasil, Lei 14.874/2024</option>
+            <option value="multi">Multiple countries (cross-border study)</option>
+            <option value="other">Other / not listed</option>
+          </select>
+          <details class="expand">
+            <summary>Why does this matter</summary>
+            <div class="body">
+              <p>Most frameworks share core principles (informed consent, risk minimisation, vulnerable population protections) but diverge on procedure. In the US, even &ldquo;exempt&rdquo; research usually requires the IRB to make the exemption determination; you don&rsquo;t self-exempt. In the UK, the HRA decides whether their approval is required for NHS research, but university research often runs through institutional RECs. Canada&rsquo;s TCPS 2 has a distinct chapter on Indigenous research. India&rsquo;s ICMR distinguishes social/behavioural from biomedical pathways, and IECs reviewing biomedical research must register with DHR via the Naitik portal. China now operates two parallel 2023 frameworks (NHC for biomedical, MOST for broader science and AI). Brazil tightened its system with Lei 14.874/2024.</p>
+            </div>
+          </details>
+        </section>
+
+        <!-- Q2 -->
+        <section class="qsection">
+          <div class="qsection-head"><span class="qnum">Q2</span><h2>What is the primary purpose of this work?</h2></div>
+          <p class="qhint">This question alone often settles things. If the work isn&rsquo;t &ldquo;research&rdquo; under the regulatory definition, IRB review may not apply at all (though the institution may still want to know).</p>
+          <div class="opts" data-question="purpose" data-type="single">
+            <label class="opt"><input type="radio" name="purpose" value="research" /><span class="opt-label">Generate generalizable knowledge intended for publication, conference, thesis, or dissertation<span class="desc">The classic definition of research. Almost certainly within scope.</span></span></label>
+            <label class="opt"><input type="radio" name="purpose" value="qi" /><span class="opt-label">Quality improvement at a single institution, no plan to publish or generalize<span class="desc">Examples: improving wait times in a clinic, reducing form errors at an office.</span></span></label>
+            <label class="opt"><input type="radio" name="purpose" value="classroom" /><span class="opt-label">Classroom exercise (graded coursework, not for publication)<span class="desc">Methods practice, course-based projects without external dissemination.</span></span></label>
+            <label class="opt"><input type="radio" name="purpose" value="journalism" /><span class="opt-label">Journalism, documentary, oral history, or biography<span class="desc">In several frameworks these are explicitly outside the research definition.</span></span></label>
+            <label class="opt"><input type="radio" name="purpose" value="evaluation" /><span class="opt-label">Program evaluation for an organization<span class="desc">Internal evaluation may not be research, but the line is genuinely fuzzy.</span></span></label>
+            <label class="opt"><input type="radio" name="purpose" value="mixed" /><span class="opt-label">Mixed or not sure<span class="desc">Common, and a fine answer. The tool will steer you toward asking the IRB.</span></span></label>
+          </div>
+        </section>
+
+        <!-- Q3 -->
+        <section class="qsection">
+          <div class="qsection-head"><span class="qnum">Q3</span><h2>What is the data source?</h2></div>
+          <p class="qhint">&ldquo;Are humans involved&rdquo; sounds simple. The wrinkle is secondary data; nobody is being interviewed, but the data still came from people.</p>
+          <div class="opts" data-question="dataSource" data-type="single">
+            <label class="opt"><input type="radio" name="dataSource" value="primary" /><span class="opt-label">New data from humans (interviews, surveys, experiments, observations, samples)<span class="desc">Direct interaction or intervention with people.</span></span></label>
+            <label class="opt"><input type="radio" name="dataSource" value="existing" /><span class="opt-label">Existing data from humans (records, datasets, archived material, social media)<span class="desc">No interaction; analysis of what already exists.</span></span></label>
+            <label class="opt"><input type="radio" name="dataSource" value="both" /><span class="opt-label">Both new and existing data</span></label>
+            <label class="opt"><input type="radio" name="dataSource" value="nohumans" /><span class="opt-label">No humans involved (literature review, simulations, animals, public records of organizations)<span class="desc">Animal research has its own committee (IACUC in the US, AEC in Australia). Outside scope of IRB.</span></span></label>
+          </div>
+        </section>
+
+        <!-- Q4 -->
+        <section class="qsection">
+          <div class="qsection-head"><span class="qnum">Q4</span><h2>What activities are involved? <span style="font-weight: 400; color: var(--ink-faint); font-size: 14px;">(select all)</span></h2></div>
+          <p class="qhint">Each activity carries different risk profiles and consent requirements. Selecting many isn&rsquo;t bad; it just sharpens the recommendation.</p>
+          <div class="opts cols-2" data-question="activities" data-type="multi">
+            <label class="opt"><input type="checkbox" name="activities" value="survey" /><span class="opt-label">Surveys or questionnaires</span></label>
+            <label class="opt"><input type="checkbox" name="activities" value="interview" /><span class="opt-label">Interviews or focus groups</span></label>
+            <label class="opt"><input type="checkbox" name="activities" value="observation_public" /><span class="opt-label">Observation in public settings</span></label>
+            <label class="opt"><input type="checkbox" name="activities" value="observation_intervene" /><span class="opt-label">Observation with intervention or manipulation</span></label>
+            <label class="opt"><input type="checkbox" name="activities" value="experiment" /><span class="opt-label">Behavioural experiment or task-based study</span></label>
+            <label class="opt"><input type="checkbox" name="activities" value="biomedical" /><span class="opt-label">Biomedical procedure (drug, device, blood, imaging) <span class="tag flag-orange">High</span></span></label>
+            <label class="opt"><input type="checkbox" name="activities" value="biospecimens" /><span class="opt-label">Biospecimens or genetic material <span class="tag flag-orange">High</span></span></label>
+            <label class="opt"><input type="checkbox" name="activities" value="recording" /><span class="opt-label">Audio or video recording</span></label>
+            <label class="opt"><input type="checkbox" name="activities" value="online_data" /><span class="opt-label">Online or social media data collection</span></label>
+            <label class="opt"><input type="checkbox" name="activities" value="ai_subject" /><span class="opt-label">AI/ML system as a study tool or intervention <span class="tag flag-indigo">Emerging</span><span class="desc">Chatbots, decision-support algorithms, generative AI in study procedures.</span></span></label>
+            <label class="opt"><input type="checkbox" name="activities" value="ai_training" /><span class="opt-label">Training or fine-tuning a model on human data <span class="tag flag-indigo">Emerging</span><span class="desc">Even with de-identified data, model memorisation and re-identification raise specific risks.</span></span></label>
+            <label class="opt"><input type="checkbox" name="activities" value="deception" /><span class="opt-label">Deception or incomplete disclosure <span class="tag flag-rust">Flag</span></span></label>
+          </div>
+        </section>
+
+        <!-- Q5 -->
+        <section class="qsection">
+          <div class="qsection-head"><span class="qnum">Q5</span><h2>Population characteristics <span style="font-weight: 400; color: var(--ink-faint); font-size: 14px;">(select all that apply)</span></h2></div>
+          <p class="qhint">Frameworks worldwide treat certain groups as needing extra protection. If any apply, expect closer scrutiny and additional consent procedures.</p>
+          <div class="opts cols-2" data-question="population" data-type="multi">
+            <label class="opt"><input type="checkbox" name="population" value="general" /><span class="opt-label">General adult population (18 and over)</span></label>
+            <label class="opt"><input type="checkbox" name="population" value="minors" /><span class="opt-label">Minors (under 18) <span class="tag flag-orange">Vulnerable</span></span></label>
+            <label class="opt"><input type="checkbox" name="population" value="pregnant" /><span class="opt-label">Pregnant people, fetuses, neonates <span class="tag flag-orange">Vulnerable</span></span></label>
+            <label class="opt"><input type="checkbox" name="population" value="prisoners" /><span class="opt-label">Prisoners or incarcerated persons <span class="tag flag-rust">Vulnerable</span></span></label>
+            <label class="opt"><input type="checkbox" name="population" value="cognitive" /><span class="opt-label">Adults with diminished decision-making capacity <span class="tag flag-orange">Vulnerable</span></span></label>
+            <label class="opt"><input type="checkbox" name="population" value="own_students" /><span class="opt-label">Researcher&rsquo;s own students, employees, or subordinates <span class="tag flag-amber">Power</span></span></label>
+            <label class="opt"><input type="checkbox" name="population" value="patients" /><span class="opt-label">Patients under the researcher&rsquo;s care <span class="tag flag-amber">Power</span></span></label>
+            <label class="opt"><input type="checkbox" name="population" value="indigenous" /><span class="opt-label">Indigenous communities or specific cultural groups <span class="tag flag-orange">Special</span></span></label>
+            <label class="opt"><input type="checkbox" name="population" value="refugees" /><span class="opt-label">Refugees, asylum seekers, undocumented persons <span class="tag flag-orange">Vulnerable</span></span></label>
+            <label class="opt"><input type="checkbox" name="population" value="critically_ill" /><span class="opt-label">Critically ill, dying, or terminally ill <span class="tag flag-orange">Vulnerable</span></span></label>
+            <label class="opt"><input type="checkbox" name="population" value="lowresource" /><span class="opt-label">Communities in low-resource or low-literacy settings <span class="tag flag-amber">Justice</span></span></label>
+          </div>
+        </section>
+
+        <!-- Q6 -->
+        <section class="qsection">
+          <div class="qsection-head"><span class="qnum">Q6</span><h2>How identifiable is the data?</h2></div>
+          <p class="qhint">Identifiability often determines whether a study can clear the exempt threshold. Even &ldquo;de-identified&rdquo; data can re-identify under the wrong conditions.</p>
+          <div class="opts" data-question="identifiability" data-type="single">
+            <label class="opt"><input type="radio" name="identifiability" value="direct" /><span class="opt-label">Direct identifiers retained (names, IDs, photos, voice)<span class="desc">Standard for most clinical and longitudinal research.</span></span></label>
+            <label class="opt"><input type="radio" name="identifiability" value="indirect" /><span class="opt-label">Indirect identifiers only (dates, ZIP, demographics that combined could identify)<span class="desc">Often the riskiest category; people underestimate re-identification.</span></span></label>
+            <label class="opt"><input type="radio" name="identifiability" value="coded" /><span class="opt-label">Coded with a key linking codes to identities<span class="desc">Common practice; counts as identifiable while the key exists.</span></span></label>
+            <label class="opt"><input type="radio" name="identifiability" value="deidentified" /><span class="opt-label">De-identified (originally identifiable, key destroyed)</span></label>
+            <label class="opt"><input type="radio" name="identifiability" value="anonymous" /><span class="opt-label">Anonymous from collection (never identifiable)</span></label>
+            <label class="opt"><input type="radio" name="identifiability" value="public" /><span class="opt-label">Publicly available, no expectation of privacy</span></label>
+          </div>
+        </section>
+
+        <!-- Q7 -->
+        <section class="qsection">
+          <div class="qsection-head"><span class="qnum">Q7</span><h2>Topic sensitivity <span style="font-weight: 400; color: var(--ink-faint); font-size: 14px;">(select all)</span></h2></div>
+          <p class="qhint">Sensitive topics combined with identifiable data is the combination that pushes most studies into full board review.</p>
+          <div class="opts cols-2" data-question="sensitivity" data-type="multi">
+            <label class="opt"><input type="checkbox" name="sensitivity" value="none" /><span class="opt-label">None of the topics below apply</span></label>
+            <label class="opt"><input type="checkbox" name="sensitivity" value="mental_health" /><span class="opt-label">Mental health, trauma, suicide</span></label>
+            <label class="opt"><input type="checkbox" name="sensitivity" value="illegal" /><span class="opt-label">Illegal activities or behaviours</span></label>
+            <label class="opt"><input type="checkbox" name="sensitivity" value="sexuality" /><span class="opt-label">Sexual practices or orientation</span></label>
+            <label class="opt"><input type="checkbox" name="sensitivity" value="substance" /><span class="opt-label">Drug, alcohol, or substance use</span></label>
+            <label class="opt"><input type="checkbox" name="sensitivity" value="immigration" /><span class="opt-label">Immigration or citizenship status</span></label>
+            <label class="opt"><input type="checkbox" name="sensitivity" value="stigmatized_health" /><span class="opt-label">Stigmatised health conditions (HIV, infectious disease)</span></label>
+            <label class="opt"><input type="checkbox" name="sensitivity" value="political" /><span class="opt-label">Political or religious views in repressive contexts</span></label>
+            <label class="opt"><input type="checkbox" name="sensitivity" value="violence" /><span class="opt-label">Domestic violence, abuse, exploitation</span></label>
+            <label class="opt"><input type="checkbox" name="sensitivity" value="genetic" /><span class="opt-label">Genetic information</span></label>
+          </div>
+        </section>
+
+        <!-- Q8 -->
+        <section class="qsection">
+          <div class="qsection-head"><span class="qnum">Q8</span><h2>Best estimate of risk to participants</h2></div>
+          <p class="qhint">&ldquo;Minimal risk&rdquo; has a specific regulatory meaning: probability and magnitude of harm no greater than ordinarily encountered in daily life or routine examinations.</p>
+          <div class="opts" data-question="risk" data-type="single">
+            <label class="opt"><input type="radio" name="risk" value="minimal" /><span class="opt-label">No greater than everyday life<span class="desc">Standard surveys, interviews on mundane topics, classroom-style experiments.</span></span></label>
+            <label class="opt"><input type="radio" name="risk" value="slightly_above" /><span class="opt-label">Slightly greater than minimal<span class="desc">Transient discomfort, mild stress, minor inconvenience. Most behavioural research.</span></span></label>
+            <label class="opt"><input type="radio" name="risk" value="greater" /><span class="opt-label">Greater than minimal<span class="desc">Real possibility of psychological or physical harm, or breach of confidentiality with consequences.</span></span></label>
+            <label class="opt"><input type="radio" name="risk" value="substantial" /><span class="opt-label">Substantial<span class="desc">Drug or device trial, surgical intervention, vulnerable population in sensitive territory.</span></span></label>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- ===== Post-approval card (hidden by default) ===== -->
+      <div class="card" id="postApprovalCard" style="display:none;">
+        <section class="qsection">
+          <div class="qsection-head"><span class="qnum">P1</span><h2>What kind of change happened?</h2></div>
+          <p class="qhint">Different changes carry different obligations. Some need an amendment before you can implement them, some need a report after the fact, some need both.</p>
+          <div class="opts" data-question="changeType" data-type="single">
+            <label class="opt"><input type="radio" name="changeType" value="protocol_minor" /><span class="opt-label">Minor protocol change<span class="desc">Typo fix, clarification, contact info update, minor wording in recruitment.</span></span></label>
+            <label class="opt"><input type="radio" name="changeType" value="protocol_major" /><span class="opt-label">Substantive protocol change<span class="desc">New procedure, expanded sample size, new study site, new investigator.</span></span></label>
+            <label class="opt"><input type="radio" name="changeType" value="consent" /><span class="opt-label">Change to the consent form or process<span class="desc">New risks disclosed, new procedures added, new compensation structure.</span></span></label>
+            <label class="opt"><input type="radio" name="changeType" value="adverse_event" /><span class="opt-label">Adverse event in a participant<span class="desc">Harm, injury, severe distress, or unanticipated problem during the study.</span></span></label>
+            <label class="opt"><input type="radio" name="changeType" value="breach" /><span class="opt-label">Confidentiality breach<span class="desc">Lost laptop, misdirected email, unauthorised access to study data.</span></span></label>
+            <label class="opt"><input type="radio" name="changeType" value="protocol_deviation" /><span class="opt-label">Protocol deviation<span class="desc">Something happened that wasn&rsquo;t in the approved protocol (intentional or not).</span></span></label>
+            <label class="opt"><input type="radio" name="changeType" value="new_population" /><span class="opt-label">Adding a new population or vulnerable group<span class="desc">Expanding from adults to minors, or adding a non-English-speaking sample.</span></span></label>
+            <label class="opt"><input type="radio" name="changeType" value="continuing" /><span class="opt-label">Continuing review approaching<span class="desc">Annual re-approval is due. Almost universal for greater-than-minimal-risk studies.</span></span></label>
+          </div>
+        </section>
+
+        <section class="qsection">
+          <div class="qsection-head"><span class="qnum">P2</span><h2>Has the change been implemented yet?</h2></div>
+          <p class="qhint">Most frameworks require IRB approval <em>before</em> implementing protocol changes, with a narrow exception for changes needed to eliminate immediate hazard.</p>
+          <div class="opts" data-question="changeStatus" data-type="single">
+            <label class="opt"><input type="radio" name="changeStatus" value="planned" /><span class="opt-label">Not yet, I&rsquo;m planning it<span class="desc">Best position. You have time to file properly.</span></span></label>
+            <label class="opt"><input type="radio" name="changeStatus" value="emergency" /><span class="opt-label">Yes, but only to eliminate immediate hazard<span class="desc">Permitted in most frameworks; report promptly afterwards.</span></span></label>
+            <label class="opt"><input type="radio" name="changeStatus" value="already" /><span class="opt-label">Yes, and not for safety reasons<span class="desc">This is a deviation. The IRB needs to know.</span></span></label>
+          </div>
+        </section>
+
+        <section class="qsection">
+          <div class="qsection-head"><span class="qnum">P3</span><h2>Does it affect risk to participants?</h2></div>
+          <p class="qhint">Risk-relevant changes are reviewed differently from purely administrative ones.</p>
+          <div class="opts" data-question="changeRisk" data-type="single">
+            <label class="opt"><input type="radio" name="changeRisk" value="none" /><span class="opt-label">No, purely administrative<span class="desc">Phone numbers, names, internal procedures invisible to participants.</span></span></label>
+            <label class="opt"><input type="radio" name="changeRisk" value="reduces" /><span class="opt-label">Reduces risk<span class="desc">Fewer procedures, removed sensitive question, added safeguard.</span></span></label>
+            <label class="opt"><input type="radio" name="changeRisk" value="adds_minor" /><span class="opt-label">Adds minor risk<span class="desc">An additional brief question, a slightly longer session.</span></span></label>
+            <label class="opt"><input type="radio" name="changeRisk" value="adds_major" /><span class="opt-label">Materially increases risk<span class="desc">New invasive procedure, new sensitive topic, new vulnerable population.</span></span></label>
+          </div>
+        </section>
+      </div>
+
+      <div class="toolbar">
+        <button class="btn primary" id="generateBtn" type="button">Generate full report &rsaquo;</button>
+        <button class="btn ghost" id="resetBtn" type="button">Reset all</button>
+      </div>
+
+      <div class="disclaimer">
+        <span class="lead">Important</span>
+        This is a self-assessment tool. It can prepare you for a smarter conversation with an IRB, REC, HREC, IEC, or equivalent body. It cannot replace one. Final determination rests with the institutional ethics body.
+      </div>
+
+      <div class="report" id="report">
+        <div class="report-card">
+          <h2 id="reportTitle">Your full assessment</h2>
+          <p class="deck" id="reportLede"></p>
+          <div class="report-grid" id="reportGrid"></div>
+          <div class="toolbar">
+            <button class="btn primary" id="copyAllBtn" type="button">Copy report</button>
+            <button class="btn ghost" id="downloadBtn" type="button">Download .txt</button>
+            <button class="btn ghost" type="button" onclick="window.print()">Print</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scenarios -->
+      <div class="scenarios">
+        <h3>Try a worked scenario</h3>
+        <div class="scen-filter" id="scenFilter"></div>
+        <div class="scen-grid" id="scenGrid"></div>
+      </div>
+
+      <!-- Common deficiencies -->
+      <div class="deficiencies">
+        <h3>Common deficiencies database</h3>
+        <p>Search the issues that most often trigger revisions, queries, or rejections. Useful for researchers preparing submissions, IRB members reviewing them, and editors evaluating manuscripts.</p>
+        <div class="def-search">
+          <input type="text" id="defSearch" placeholder="Search by topic (consent, deception, AI, vulnerable, GDPR&hellip;)" />
+        </div>
+        <div class="def-list" id="defList"></div>
+      </div>
+
+      <!-- Reference shelf -->
+      <div class="reference-shelf">
+        <h3>Reference shelf &middot; Foundational documents</h3>
+        <div class="ref-grid">
+          <div class="ref-item"><div class="ref-name">Belmont Report <span class="ref-cite">1979</span></div><p class="ref-body">The three foundational principles for US human subjects research: respect for persons, beneficence, justice. Underlies the Common Rule.</p></div>
+          <div class="ref-item"><div class="ref-name">Declaration of Helsinki <span class="ref-cite">WMA</span></div><p class="ref-body">World Medical Association statement on ethics in medical research; the international gold standard most journals expect biomedical research to follow. Most recent revision: 2024.</p></div>
+          <div class="ref-item"><div class="ref-name">CIOMS Guidelines <span class="ref-cite">2016</span></div><p class="ref-body">Council for International Organizations of Medical Sciences. Health-related research in low-resource settings, vulnerable populations, biobanking, cluster trials.</p></div>
+          <div class="ref-item"><div class="ref-name">Common Rule <span class="ref-cite">45 CFR 46</span></div><p class="ref-body">US federal policy on human subjects protection. Eight exempt categories under \u00a746.104(d)(1)\u2013(8). Revised 2018, effective January 21, 2019.</p></div>
+          <div class="ref-item"><div class="ref-name">Nuremberg Code <span class="ref-cite">1947</span></div><p class="ref-body">Ten principles arising from the Nuremberg trials. Voluntary consent is principle one. Historical bedrock of all research ethics frameworks.</p></div>
+          <div class="ref-item"><div class="ref-name">ICMJE Recommendations <span class="ref-cite">Journals</span></div><p class="ref-body">International Committee of Medical Journal Editors. Defines what journals expect in ethics statements, consent disclosures, and authorship of submitted manuscripts.</p></div>
+          <div class="ref-item"><div class="ref-name">COPE Guidelines <span class="ref-cite">Editors</span></div><p class="ref-body">Committee on Publication Ethics. Flowcharts for handling suspected research misconduct, missing ethics approval, and post-publication concerns.</p></div>
+          <div class="ref-item"><div class="ref-name">Common consent elements <span class="ref-cite">\u00a746.116</span></div><p class="ref-body">Eight basic elements (purpose, procedures, risks, benefits, alternatives, confidentiality, compensation, contacts, voluntary participation) plus additional elements when applicable.</p></div>
+        </div>
+      </div>
+
+      <!-- Glossary -->
+      <div class="glossary">
+        <h3>Glossary</h3>
+        <div class="gloss-grid">
+          <dl class="gloss-item"><dt>Generalizable Knowledge</dt><dd>Findings intended to be applied beyond the immediate program or setting. The intent to generalize is what often distinguishes "research" from quality improvement.</dd></dl>
+          <dl class="gloss-item"><dt>Minimal Risk <span class="ab">\u00a746.102</span></dt><dd>Probability and magnitude of harm no greater than what one would encounter in daily life or during routine physical or psychological examinations.</dd></dl>
+          <dl class="gloss-item"><dt>Vulnerable Population</dt><dd>Groups whose capacity to give voluntary, informed consent may be limited or compromised: children, prisoners, pregnant people, those with cognitive impairment, economically dependent groups.</dd></dl>
+          <dl class="gloss-item"><dt>Identifiable Private Information</dt><dd>Data that includes identifiers, or where identity could be readily ascertained from the data itself or by linking to other accessible data.</dd></dl>
+          <dl class="gloss-item"><dt>Re-identification Risk</dt><dd>The chance that supposedly de-identified or anonymous data can be linked back to specific individuals, often by combining with other available datasets.</dd></dl>
+          <dl class="gloss-item"><dt>Limited IRB Review <span class="ab">2018 Rule</span></dt><dd>A streamlined review for certain exempt categories (especially \u00a746.104(d)(2)(iii), (3), (7), (8)) where the IRB confirms specific privacy and confidentiality safeguards are met.</dd></dl>
+          <dl class="gloss-item"><dt>Broad Consent <span class="ab">\u00a746.116(d)</span></dt><dd>Consent for storage, maintenance, and secondary research use of identifiable information or biospecimens; specific elements required, distinct from study-specific consent.</dd></dl>
+          <dl class="gloss-item"><dt>Waiver of Consent</dt><dd>An IRB-granted exception to the consent requirement, allowed only when the research could not practicably be done otherwise and risks are minimal.</dd></dl>
+          <dl class="gloss-item"><dt>Algorithmic Harm</dt><dd>Risks unique to AI/ML systems: bias amplification, opacity in decision-making, automation of consequential judgments, training data leakage.</dd></dl>
+          <dl class="gloss-item"><dt>Model Card / Datasheet</dt><dd>Standardised documentation for an AI model or training dataset, intended to surface intended uses, limitations, and ethical considerations.</dd></dl>
+          <dl class="gloss-item"><dt>Data Minimisation <span class="ab">GDPR Art. 5</span></dt><dd>The principle that personal data collected should be adequate, relevant, and limited to what is necessary for the purposes; foundational across modern privacy frameworks.</dd></dl>
+          <dl class="gloss-item"><dt>Contextual Integrity</dt><dd>The norm that information flows are appropriate when they match the norms of the context in which the information was originally shared. Key concept for online and social media research.</dd></dl>
+          <dl class="gloss-item"><dt>Certificate of Confidentiality <span class="ab">US</span></dt><dd>NIH-issued protection allowing researchers to refuse compelled disclosure of identifying information in legal proceedings. Other jurisdictions have analogous protections.</dd></dl>
+          <dl class="gloss-item"><dt>Continuing Review</dt><dd>Periodic re-approval of an active study, traditionally annual; often eliminated for minimal-risk studies under the 2018 Common Rule revisions.</dd></dl>
+          <dl class="gloss-item"><dt>Data Safety Monitoring Board <span class="ab">DSMB</span></dt><dd>Independent group monitoring participant safety and trial integrity in higher-risk biomedical studies; required for many phase III trials.</dd></dl>
+          <dl class="gloss-item"><dt>HRA / HREC / REC / REB / IEC <span class="ab">Various</span></dt><dd>Research ethics review bodies by region: Health Research Authority (UK), Human Research Ethics Committee (Australia), Research Ethics Committee (UK universities), Research Ethics Board (Canada), Institutional Ethics Committee (India).</dd></dl>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Verdict panel -->
+    <aside>
+      <div class="verdict">
+        <p class="verdict-tag">Live verdict</p>
+        <div class="verdict-card">
+          <div class="verdict-state">
+            <div class="verdict-meter" id="verdictMeter">
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+              <span class="dot"></span><span class="dot"></span>
+              <span class="label" id="meterLabel">0 of 8</span>
+            </div>
+            <div class="verdict-badge idle" id="verdictBadge">Awaiting answers</div>
+            <h3 class="verdict-headline" id="verdictHeadline">Begin with question 1</h3>
+            <p class="verdict-sub" id="verdictSub">As you answer, this panel narrows in on a likely review track and explains why.</p>
+          </div>
+          <div class="verdict-section" id="reasonsSection" style="display:none;">
+            <h4>What&rsquo;s shaping this verdict</h4>
+            <ul class="verdict-list" id="reasonsList"></ul>
+          </div>
+          <div class="verdict-section" id="flagsSection" style="display:none;">
+            <h4>Considerations that escalate</h4>
+            <ul class="verdict-list" id="flagsList"></ul>
+          </div>
+        </div>
+
+        <!-- Submission readiness audit -->
+        <div class="audit-card" id="auditCard" style="display:none;">
+          <h4>Submission readiness</h4>
+          <div class="audit-bar"><div class="fill" id="auditFill" style="width:0%"></div></div>
+          <div class="audit-score">Score: <strong id="auditScore">0</strong> of <strong id="auditMax">10</strong></div>
+          <ul class="audit-list" id="auditList"></ul>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <footer class="colophon">
+    <div><strong>The IRB Triage</strong> &middot; A self-contained, offline self-assessment tool. No tracking, no network calls.</div>
+    <div class="credit">Concept and curation by <a href="https://www.linkedin.com/in/beingbabu" target="_blank" rel="noopener noreferrer">Prof. Babu George</a>.</div>
+  </footer>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  const state = {
+    mode: 'researcher',
+    jurisdiction: 'us',
+    purpose: null,
+    dataSource: null,
+    activities: [],
+    population: [],
+    identifiability: null,
+    sensitivity: [],
+    risk: null,
+    // post-approval state
+    changeType: null,
+    changeStatus: null,
+    changeRisk: null
+  };
+
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+  // ---------- Mode switching ----------
+  const modeDecks = {
+    researcher: 'Most researchers don\u2019t need a verdict; they need to know <strong>which review track they\u2019re heading toward</strong> so they can plan timelines and prepare documents. Answer the questions below. The right panel narrows in as you go. The final report includes likely documents, red flags, and questions to bring to the IRB office.',
+    reviewer:   'For IRB, REC, HREC, or IEC members evaluating a submission. Enter what the protocol says about the study, and the tool generates a structured review checklist: review criteria mapped to the regulation, vulnerable population safeguards to verify, common deficiencies to look for, and consent quality prompts.',
+    manuscript: 'For peer reviewers and editors. Enter what the manuscript reports about the study, and the tool flags whether the ethics statement looks adequate, what red flags warrant a query to authors, and what international norms (Declaration of Helsinki, ICMJE, COPE) apply.',
+    postapproval: 'For approved studies. Tell the tool what changed; it returns whether you need an amendment before implementing, a prompt report afterward, both, or neither. Different changes carry different obligations across frameworks.'
+  };
+
+  function setMode(mode) {
+    state.mode = mode;
+    document.body.dataset.mode = mode;
+    $$('.mode-card').forEach(c => c.dataset.active = (c.dataset.mode === mode) ? 'true' : 'false');
+    $('#modeDeck').innerHTML = modeDecks[mode];
+
+    // toggle pre vs post-approval card
+    if (mode === 'postapproval') {
+      $('#preApprovalCard').style.display = 'none';
+      $('#postApprovalCard').style.display = '';
+    } else {
+      $('#preApprovalCard').style.display = '';
+      $('#postApprovalCard').style.display = 'none';
+    }
+
+    if ($('#report').classList.contains('shown')) {
+      const result = assess();
+      renderReport(result);
+    }
+    update();
+  }
+
+  $$('.mode-card').forEach(card => {
+    card.addEventListener('click', () => setMode(card.dataset.mode));
+  });
+
+  // ---------- Wire inputs ----------
+  $('#jurisdiction').addEventListener('change', e => { state.jurisdiction = e.target.value; update(); });
+
+  $$('.opts').forEach(group => {
+    const q = group.dataset.question;
+    const type = group.dataset.type;
+    group.addEventListener('change', e => {
+      if (type === 'single') {
+        state[q] = e.target.value;
+      } else {
+        const inputs = $$('input[name="' + q + '"]', group);
+        if (q === 'sensitivity' && e.target.value === 'none' && e.target.checked) {
+          inputs.forEach(i => { if (i.value !== 'none') i.checked = false; });
+          state.sensitivity = ['none'];
+        } else if (q === 'sensitivity' && e.target.value !== 'none' && e.target.checked) {
+          const noneInput = inputs.find(i => i.value === 'none');
+          if (noneInput) noneInput.checked = false;
+          state.sensitivity = inputs.filter(i => i.checked).map(i => i.value);
+        } else {
+          state[q] = inputs.filter(i => i.checked).map(i => i.value);
+        }
+      }
+      update();
+    });
+  });
+
+  $('#generateBtn').addEventListener('click', () => {
+    const result = assess();
+    renderReport(result);
+    $('#report').classList.add('shown');
+    setTimeout(() => $('#report').scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+  });
+
+  $('#resetBtn').addEventListener('click', () => {
+    if (!confirm('Clear all answers and start over?')) return;
+    Object.assign(state, {
+      mode: state.mode,
+      jurisdiction: 'us', purpose: null, dataSource: null,
+      activities: [], population: [], identifiability: null,
+      sensitivity: [], risk: null,
+      changeType: null, changeStatus: null, changeRisk: null
+    });
+    $('#jurisdiction').value = 'us';
+    $$('input[type="radio"], input[type="checkbox"]').forEach(i => { i.checked = false; });
+    $('#report').classList.remove('shown');
+    update();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ---------- Counters ----------
+  function answeredCount() {
+    if (state.mode === 'postapproval') {
+      let n = 0;
+      if (state.changeType) n++;
+      if (state.changeStatus) n++;
+      if (state.changeRisk) n++;
+      if (state.jurisdiction) n++;
+      return n;
+    }
+    let n = 0;
+    if (state.purpose) n++;
+    if (state.dataSource) n++;
+    if (state.activities.length > 0) n++;
+    if (state.population.length > 0) n++;
+    if (state.identifiability) n++;
+    if (state.sensitivity.length > 0) n++;
+    if (state.risk) n++;
+    if (state.jurisdiction) n++;
+    return n;
+  }
+
+  function maxCount() { return state.mode === 'postapproval' ? 4 : 8; }
+
+  function updateMeter() {
+    const n = answeredCount();
+    const max = maxCount();
+    const meter = $('#verdictMeter');
+    // re-render dots if mode change altered max
+    const desiredDotCount = max;
+    let dots = $$('.dot', meter);
+    if (dots.length !== desiredDotCount) {
+      // rebuild
+      const label = $('#meterLabel');
+      meter.innerHTML = '';
+      for (let i = 0; i < desiredDotCount; i++) {
+        const span = document.createElement('span');
+        span.className = 'dot';
+        meter.appendChild(span);
+      }
+      meter.appendChild(label);
+      dots = $$('.dot', meter);
+    }
+    dots.forEach((d, i) => d.classList.toggle('lit', i < n));
+    $('#meterLabel').textContent = n + ' of ' + max;
+  }
+
+  // ---------- Assessment engine ----------
+  function assess() {
+    if (state.mode === 'postapproval') return assessPostApproval();
+
+    const reasons = [];
+    const flags = [];
+    let verdict = 'partial';
+    let track = null;
+    let headline = '';
+    let sub = '';
+
+    if (state.purpose === 'qi') {
+      verdict = 'notneeded';
+      headline = 'Likely outside the research definition';
+      sub = 'Quality improvement that stays within one institution and isn\u2019t intended for generalization typically isn\u2019t research under most frameworks.';
+      reasons.push({ kind: 'good', text: 'Purpose is internal QI, not generation of generalizable knowledge.' });
+      reasons.push({ kind: 'note', text: 'The line gets blurry the moment lessons learned will be published beyond the site.' });
+    } else if (state.purpose === 'classroom') {
+      verdict = 'notneeded';
+      headline = 'Likely classroom-exempt';
+      sub = 'Course-based work for grading, with no plan to publish or present beyond the classroom, is generally not research.';
+      reasons.push({ kind: 'good', text: 'Classroom exercises with no external dissemination usually fall outside research review.' });
+      reasons.push({ kind: 'note', text: 'If results may later be published, the determination changes.' });
+    } else if (state.purpose === 'journalism') {
+      verdict = 'notneeded';
+      headline = 'Generally outside research review';
+      sub = 'Journalism, oral history, and biography are commonly excluded from the regulatory definition of research.';
+      reasons.push({ kind: 'good', text: 'Journalism and oral history are explicitly excluded under the US Common Rule and several other frameworks.' });
+    } else if (state.purpose === 'evaluation') {
+      verdict = 'partial';
+      headline = 'Borderline territory';
+      sub = 'Program evaluation can sit on either side of the research line. Many IRBs will issue a "not human subjects research" determination if asked.';
+      reasons.push({ kind: 'note', text: 'Internal evaluation alone is rarely research; intent to publish moves it across the line.' });
+      track = 'special';
+    } else if (state.dataSource === 'nohumans') {
+      verdict = 'notneeded';
+      headline = 'No IRB review required';
+      sub = 'No human subjects, no IRB. Animal research uses a separate committee. Theoretical and literature work isn\u2019t in scope.';
+      reasons.push({ kind: 'good', text: 'No data is being collected from or about human participants.' });
+    } else {
+      track = computeTrack();
+      if (track === 'exempt') {
+        verdict = 'exempt';
+        headline = 'Likely qualifies for exempt review';
+        sub = 'The study sits within one of the low-risk exempt categories. Even so, in most jurisdictions the IRB must make the exemption determination.';
+      } else if (track === 'expedited') {
+        verdict = 'expedited';
+        headline = 'Likely expedited review';
+        sub = 'Minimal-risk research with identifiable data is the standard expedited pathway.';
+      } else if (track === 'fullboard') {
+        verdict = 'fullboard';
+        headline = 'Likely full board review';
+        sub = 'One or more elements push this study to convened committee review. Plan a longer timeline.';
+      }
+      buildReasons(reasons, flags);
+    }
+
+    if (state.jurisdiction === 'multi') flags.push({ kind: 'flag', text: 'Multi-country research: each jurisdiction\u2019s ethics review may apply independently.' });
+    if (state.purpose === 'mixed') reasons.push({ kind: 'note', text: 'Purpose marked as mixed or unsure. The safe move is a "not human subjects research" determination request.' });
+
+    return { verdict, track, headline, sub, reasons, flags };
+  }
+
+  function assessPostApproval() {
+    const reasons = [];
+    const flags = [];
+    let verdict = 'partial';
+    let headline = '';
+    let sub = '';
+
+    const t = state.changeType;
+    const status = state.changeStatus;
+    const risk = state.changeRisk;
+
+    if (!t) {
+      return { verdict: 'partial', track: null, headline: 'Tell the tool what changed', sub: 'Answer P1 and the recommendation will sharpen.', reasons, flags };
+    }
+
+    // Adverse event / breach: report immediately
+    if (t === 'adverse_event' || t === 'breach') {
+      verdict = 'report_now';
+      headline = t === 'adverse_event' ? 'Report this promptly' : 'Confidentiality breach: report promptly';
+      sub = t === 'adverse_event'
+        ? 'Adverse events and unanticipated problems involving risks to subjects or others must be reported within the IRB\u2019s required timeframe (often 10 business days; sooner for serious or fatal events).'
+        : 'Confidentiality breaches typically require prompt reporting to the IRB and often to a privacy officer or data protection authority. Document what happened, who was affected, and what mitigation was taken.';
+      reasons.push({ kind: 'flag', text: 'Reportable event under most frameworks.' });
+      reasons.push({ kind: 'note', text: 'Document immediately, even before the formal report. The narrative matters.' });
+      if (t === 'breach' && state.jurisdiction === 'eu') flags.push({ kind: 'flag', text: 'GDPR Article 33: notify supervisory authority within 72 hours of becoming aware of a personal data breach where feasible.' });
+      if (t === 'breach' && state.jurisdiction === 'uk') flags.push({ kind: 'flag', text: 'UK GDPR / DPA 2018: ICO notification within 72 hours where the breach is likely to risk rights and freedoms.' });
+      return { verdict, track: null, headline, sub, reasons, flags };
+    }
+
+    // Continuing review
+    if (t === 'continuing') {
+      verdict = 'amend_minor';
+      headline = 'Prepare a continuing review submission';
+      sub = 'Annual or risk-based re-approval. Even when not strictly required (some minimal-risk studies under the 2018 Common Rule are exempt from continuing review), institutions usually still want a status update.';
+      reasons.push({ kind: 'note', text: 'Plan to submit 4 to 6 weeks before the current approval expires.' });
+      reasons.push({ kind: 'note', text: 'Most IRBs ask for: enrollment numbers, adverse events, protocol deviations, and any new literature affecting risk-benefit.' });
+      return { verdict, track: null, headline, sub, reasons, flags };
+    }
+
+    // Protocol deviation
+    if (t === 'protocol_deviation') {
+      verdict = 'report_now';
+      headline = 'Report the deviation';
+      sub = 'Protocol deviations should be reported. Consequences depend on whether the deviation affected participant safety or data integrity, and whether it was a one-time event or systemic.';
+      reasons.push({ kind: 'flag', text: 'Even minor deviations are usually reportable; major or systemic ones may require a corrective action plan.' });
+      reasons.push({ kind: 'note', text: 'Document: what happened, when, why, who was affected, what was done about it, and how recurrence will be prevented.' });
+      return { verdict, track: null, headline, sub, reasons, flags };
+    }
+
+    // Amendments: minor vs major depends on type and risk
+    const isMinor = (t === 'protocol_minor') || (risk === 'none');
+    const isMajor = (t === 'protocol_major' || t === 'consent' || t === 'new_population') || (risk === 'adds_major');
+
+    if (status === 'already' && t !== 'protocol_minor') {
+      verdict = 'report_now';
+      headline = 'You already implemented a change without prior approval';
+      sub = 'This is a deviation. Report to the IRB now with an explanation, an assessment of any impact on participants, and a corrective plan. Future changes need approval first.';
+      flags.push({ kind: 'flag', text: 'Implementing protocol changes before IRB approval is a deviation in nearly all frameworks.' });
+      return { verdict, track: null, headline, sub, reasons, flags };
+    }
+
+    if (isMajor) {
+      verdict = 'amend_major';
+      headline = 'Major amendment required before implementation';
+      sub = 'Substantive changes, consent revisions, or expansion to new populations need formal IRB review and approval before they take effect. Treat the timeline like a new submission for the affected portion.';
+      reasons.push({ kind: 'flag', text: 'Major amendments often require the same review track as the original (expedited or full board).' });
+      if (t === 'consent') reasons.push({ kind: 'note', text: 'Already-enrolled participants may need to re-consent depending on the change.' });
+      if (t === 'new_population' && (state.population.includes('minors') || state.population.includes('cognitive'))) flags.push({ kind: 'flag', text: 'Adding a vulnerable population usually triggers full board review and additional safeguards.' });
+      return { verdict, track: null, headline, sub, reasons, flags };
+    }
+
+    if (isMinor) {
+      verdict = 'amend_minor';
+      headline = 'Minor amendment, file before implementing';
+      sub = 'Most institutions accept minor amendments through an expedited or administrative pathway. Submit, wait for approval (often days to a few weeks), then implement.';
+      reasons.push({ kind: 'good', text: 'Risk to participants is unchanged or reduced.' });
+      reasons.push({ kind: 'note', text: 'Typo fixes, contact info, and pure administration sometimes only need notification, not approval. Confirm with your office.' });
+      return { verdict, track: null, headline, sub, reasons, flags };
+    }
+
+    return { verdict: 'partial', track: null, headline: 'A few more answers and the recommendation sharpens', sub: '', reasons, flags };
+  }
+
+  function computeTrack() {
+    const a = state.activities;
+    const p = state.population;
+    const sens = state.sensitivity.filter(s => s !== 'none');
+    const id = state.identifiability;
+    const risk = state.risk;
+
+    const fullBoardTriggers = [
+      a.includes('biomedical'),
+      a.includes('biospecimens'),
+      a.includes('deception'),
+      a.includes('observation_intervene') && (risk === 'greater' || risk === 'substantial'),
+      risk === 'greater' || risk === 'substantial',
+      p.includes('prisoners'),
+      p.includes('minors') && (risk === 'greater' || risk === 'substantial' || sens.length > 0),
+      p.includes('cognitive'),
+      sens.length > 0 && ['direct', 'indirect', 'coded'].includes(id) && risk !== 'minimal',
+      p.includes('refugees') && sens.length > 0,
+      p.includes('critically_ill'),
+      a.includes('ai_subject') && risk !== 'minimal'
+    ];
+    if (fullBoardTriggers.some(Boolean)) return 'fullboard';
+
+    const exemptCandidate = (
+      (id === 'anonymous' || id === 'public') &&
+      risk === 'minimal' &&
+      sens.length === 0 &&
+      !p.includes('minors') &&
+      !p.includes('prisoners') &&
+      !p.includes('cognitive') &&
+      !p.includes('pregnant') &&
+      !p.includes('refugees') &&
+      !a.includes('biomedical') &&
+      !a.includes('biospecimens') &&
+      !a.includes('deception') &&
+      !a.includes('ai_subject')
+    );
+    if (exemptCandidate) return 'exempt';
+
+    return 'expedited';
+  }
+
+  function buildReasons(reasons, flags) {
+    const a = state.activities;
+    const p = state.population;
+    const sens = state.sensitivity.filter(s => s !== 'none');
+    const id = state.identifiability;
+    const risk = state.risk;
+
+    if (state.dataSource === 'primary') reasons.push({ kind: 'note', text: 'New data collected directly from people, the canonical case for IRB review.' });
+    else if (state.dataSource === 'existing') reasons.push({ kind: 'note', text: 'Existing data from humans; identifiability is the key factor.' });
+    else if (state.dataSource === 'both') reasons.push({ kind: 'note', text: 'Mixed data sources. The strictest applicable standard governs.' });
+
+    if (id === 'anonymous' || id === 'public') reasons.push({ kind: 'good', text: 'Data is anonymous or public, lowering the risk profile considerably.' });
+    else if (id === 'direct' || id === 'coded') reasons.push({ kind: 'note', text: 'Data is identifiable. Confidentiality and security plans matter.' });
+    else if (id === 'indirect') reasons.push({ kind: 'note', text: 'Indirect identifiers are easy to underestimate; consider re-identification risk seriously.' });
+
+    if (risk === 'minimal') reasons.push({ kind: 'good', text: 'Minimal risk. Eligible for exempt or expedited pathways absent other escalators.' });
+    else if (risk === 'greater' || risk === 'substantial') reasons.push({ kind: 'flag', text: 'Risk is greater than minimal. Convened (full board) review is typical.' });
+
+    const vulnMap = {
+      minors: 'Minors involved; assent procedures plus parental permission are usually required.',
+      pregnant: 'Pregnant people / fetuses. Special review provisions apply in most frameworks.',
+      prisoners: 'Prisoners. Almost always full board, with a prisoner advocate on the committee.',
+      cognitive: 'Adults with diminished capacity. Surrogate consent procedures and capacity assessment likely required.',
+      indigenous: 'Indigenous communities. Community consent and culturally appropriate protocols apply (TCPS 2 Chapter 9 in Canada, AIATSIS in Australia).',
+      refugees: 'Refugees or undocumented persons. Heightened confidentiality protections; risk includes legal exposure.',
+      critically_ill: 'Critically ill or dying participants. Surrogate consent and additional safeguards likely needed.',
+      own_students: 'Power dynamics with students or subordinates. The protocol should address coercion concerns explicitly.',
+      patients: 'Power dynamics with patients. The consent process should isolate research participation from clinical care.',
+      lowresource: 'Low-resource setting: undue inducement risk if compensation is large relative to local norms; literacy considerations for written consent.'
+    };
+    p.forEach(key => { if (vulnMap[key]) flags.push({ kind: 'flag', text: vulnMap[key] }); });
+
+    if (a.includes('deception')) flags.push({ kind: 'flag', text: 'Deception requires a debriefing plan and explicit IRB justification.' });
+    if (a.includes('biomedical')) flags.push({ kind: 'flag', text: 'Biomedical procedures: a separate clinical trials authority may also apply (FDA / MHRA / DCGI / EMA-aligned).' });
+    if (a.includes('biospecimens')) flags.push({ kind: 'flag', text: 'Biospecimens: consent must address future use, storage, and possible commercialization.' });
+    if (a.includes('online_data')) flags.push({ kind: 'flag', text: 'Online or social media data: terms of service, contextual integrity, and platform-specific consent norms all apply.' });
+    if (a.includes('ai_subject')) flags.push({ kind: 'flag', text: 'AI as study tool: participants should know they\u2019re interacting with a system, not a person, except where deception is specifically justified. The Koko case is the cautionary tale.' });
+    if (a.includes('ai_training')) flags.push({ kind: 'flag', text: 'Training models on human data: model memorisation can leak training examples. Consent should cover the model\u2019s downstream use, including possible release.' });
+    if (sens.length > 0 && ['direct', 'indirect', 'coded'].includes(id)) flags.push({ kind: 'flag', text: 'Sensitive topics with identifiable data: a Certificate of Confidentiality (US) or equivalent may be advisable.' });
+    if (a.includes('recording')) flags.push({ kind: 'flag', text: 'Audio or video recording: consent must specify retention, transcription, and any planned reuse.' });
+  }
+
+  // ---------- Submission readiness audit ----------
+  function computeAudit() {
+    const checks = [];
+    const isPost = state.mode === 'postapproval';
+
+    if (isPost) {
+      checks.push({ pass: !!state.changeType, label: 'Change type identified' });
+      checks.push({ pass: !!state.changeStatus, label: 'Implementation status declared' });
+      checks.push({ pass: !!state.changeRisk, label: 'Risk impact assessed' });
+      checks.push({ pass: !!state.jurisdiction, label: 'Jurisdiction selected' });
+    } else {
+      checks.push({ pass: !!state.purpose, label: 'Purpose declared' });
+      checks.push({ pass: !!state.dataSource, label: 'Data source declared' });
+      checks.push({ pass: state.activities.length > 0, label: 'Activities listed' });
+      checks.push({ pass: state.population.length > 0, label: 'Population specified' });
+      checks.push({ pass: !!state.identifiability, label: 'Identifiability declared' });
+      checks.push({ pass: state.sensitivity.length > 0, label: 'Sensitivity declared (incl. "none")' });
+      checks.push({ pass: !!state.risk, label: 'Risk level declared' });
+      // Quality checks beyond completeness
+      const hasVulnerable = state.population.some(p => ['minors','prisoners','pregnant','cognitive','refugees','critically_ill'].includes(p));
+      if (hasVulnerable) {
+        checks.push({ pass: state.risk !== null, label: 'Vulnerable population: explicit risk assessment' });
+      }
+      const hasSensitive = state.sensitivity.filter(s => s !== 'none').length > 0;
+      const isIdentifiable = ['direct','indirect','coded'].includes(state.identifiability);
+      if (hasSensitive && isIdentifiable) {
+        checks.push({ pass: true, kind: 'warn', label: 'Sensitive + identifiable: confidentiality plan needed' });
+      }
+      if (state.activities.includes('ai_subject') || state.activities.includes('ai_training')) {
+        checks.push({ pass: true, kind: 'warn', label: 'AI involved: model documentation and disclosure plan' });
+      }
+    }
+    const passed = checks.filter(c => c.pass).length;
+    return { checks, passed, total: checks.length };
+  }
+
+  function updateAudit() {
+    const audit = computeAudit();
+    const card = $('#auditCard');
+    if (audit.total === 0) { card.style.display = 'none'; return; }
+    card.style.display = '';
+    const pct = audit.total ? Math.round((audit.passed / audit.total) * 100) : 0;
+    const fill = $('#auditFill');
+    fill.style.width = pct + '%';
+    fill.classList.remove('low', 'med', 'high');
+    fill.classList.add(pct < 50 ? 'low' : pct < 85 ? 'med' : 'high');
+    $('#auditScore').textContent = audit.passed;
+    $('#auditMax').textContent = audit.total;
+    $('#auditList').innerHTML = audit.checks.map(c =>
+      `<li class="${c.pass ? (c.kind || 'pass') : 'fail'}">${escapeHtml(c.label)}</li>`
+    ).join('');
+  }
+
+  // ---------- Live verdict ----------
+  function update() {
+    updateMeter();
+    updateAudit();
+    const n = answeredCount();
+    const badge = $('#verdictBadge');
+    const headline = $('#verdictHeadline');
+    const sub = $('#verdictSub');
+    const reasonsSection = $('#reasonsSection');
+    const flagsSection = $('#flagsSection');
+    const reasonsList = $('#reasonsList');
+    const flagsList = $('#flagsList');
+
+    const minNeeded = state.mode === 'postapproval' ? 1 : 3;
+    if (n < minNeeded) {
+      badge.className = 'verdict-badge idle';
+      badge.textContent = 'Awaiting answers';
+      headline.textContent = n === 0 ? 'Begin' : 'A few more answers and the verdict sharpens';
+      sub.textContent = state.mode === 'postapproval'
+        ? 'Tell the tool what changed and the obligation becomes clear.'
+        : 'As you answer, this panel narrows in on a likely review track.';
+      reasonsSection.style.display = 'none';
+      flagsSection.style.display = 'none';
+      return;
+    }
+    const result = assess();
+    badge.className = 'verdict-badge ' + result.verdict;
+    badge.textContent = badgeLabel(result.verdict);
+    headline.textContent = result.headline || 'Working on it';
+    sub.textContent = result.sub || '';
+    if (result.reasons.length) {
+      reasonsSection.style.display = '';
+      reasonsList.innerHTML = result.reasons.map(r => `<li class="${r.kind || ''}">${escapeHtml(r.text)}</li>`).join('');
+    } else { reasonsSection.style.display = 'none'; }
+    if (result.flags.length) {
+      flagsSection.style.display = '';
+      flagsList.innerHTML = result.flags.map(f => `<li class="${f.kind || 'flag'}">${escapeHtml(f.text)}</li>`).join('');
+    } else { flagsSection.style.display = 'none'; }
+  }
+
+  function badgeLabel(v) {
+    return ({
+      idle: 'Awaiting answers', partial: 'Need more info',
+      notneeded: 'Likely no IRB needed', exempt: 'Likely exempt',
+      expedited: 'Likely expedited', fullboard: 'Likely full board',
+      special: 'Determination needed',
+      amend_minor: 'Minor amendment', amend_major: 'Major amendment',
+      report_now: 'Report promptly'
+    })[v] || 'Unknown';
+  }
+
+  // ---------- Reports ----------
+  function renderReport(result) {
+    const mode = state.mode;
+    const titleMap = {
+      researcher: 'Your full assessment',
+      reviewer:   'Reviewer worksheet',
+      manuscript: 'Manuscript ethics check',
+      postapproval: 'Post-approval action plan'
+    };
+    $('#reportTitle').textContent = titleMap[mode];
+    $('#reportLede').textContent = result.sub || '';
+
+    let blocks = [];
+    if (mode === 'researcher') {
+      blocks = [
+        { cls: 'flags',     title: 'Red Flags Detected',                  items: result.flags.length ? result.flags.map(f=>f.text) : ['No major red flags from these answers. Standard rigour still applies.'] },
+        { cls: '',          title: 'Documents You\u2019ll Likely Need',   items: buildDocs() },
+        { cls: 'questions', title: 'Questions to Raise with Your IRB',    items: buildQuestions() },
+        { cls: '',          title: 'Estimated Timeline',                  items: buildTimeline(result) },
+        { cls: 'country',   title: 'Country-Specific Notes',              items: buildCountry() }
+      ];
+    } else if (mode === 'reviewer') {
+      blocks = [
+        { cls: 'flags',     title: 'Concerns to Probe',                   items: buildReviewerConcerns(result) },
+        { cls: '',          title: 'Review Criteria Checklist',           items: buildReviewerCriteria(result) },
+        { cls: '',          title: 'Consent Form Quality Check',          items: buildConsentChecklist() },
+        { cls: 'questions', title: 'Common Reasons for Revisions',        items: buildCommonRevisions(result) },
+        { cls: 'country',   title: 'Country-Specific Review Notes',       items: buildCountry() }
+      ];
+    } else if (mode === 'manuscript') {
+      blocks = [
+        { cls: 'flags',     title: 'Ethics Statement Red Flags',          items: buildManuscriptFlags(result) },
+        { cls: '',          title: 'What the Paper Should Report',        items: buildManuscriptExpect(result) },
+        { cls: 'questions', title: 'Polite Queries to Send Authors',      items: buildManuscriptQueries(result) },
+        { cls: '',          title: 'When to Escalate to the Editor',      items: buildManuscriptEscalation(result) },
+        { cls: 'country',   title: 'Applicable Standards',                items: buildManuscriptStandards() }
+      ];
+    } else if (mode === 'postapproval') {
+      blocks = [
+        { cls: 'flags',     title: 'Action Required',                     items: buildPostFlags(result) },
+        { cls: '',          title: 'What to Submit',                      items: buildPostDocs(result) },
+        { cls: 'questions', title: 'Questions for the IRB',               items: buildPostQuestions(result) },
+        { cls: '',          title: 'Timing Expectations',                 items: buildPostTimeline(result) },
+        { cls: 'country',   title: 'Country-Specific Notes',              items: buildCountry() }
+      ];
+    }
+
+    const grid = $('#reportGrid');
+    grid.innerHTML = blocks.map(b => `
+      <div class="report-block ${b.cls}">
+        <h3>${escapeHtml(b.title)}</h3>
+        <ul>${b.items.map(it => `<li>${escapeHtml(it)}</li>`).join('')}</ul>
+      </div>
+    `).join('');
+
+    window.__lastReport = { result, blocks, mode };
+  }
+
+  // --- Researcher items ---
+  function buildDocs() {
+    const list = ['Protocol or research plan with aims, methods, and analysis approach'];
+    if (state.dataSource === 'primary' || state.dataSource === 'both') {
+      list.push('Informed consent form (with assent form for minors if applicable)');
+      list.push('Recruitment materials (flyers, emails, scripts)');
+    }
+    if (state.activities.includes('survey')) list.push('Copy of the full questionnaire or survey instrument');
+    if (state.activities.includes('interview')) list.push('Interview guide or focus group protocol');
+    if (state.activities.includes('experiment')) list.push('Stimuli, manipulation materials, and debriefing script');
+    if (state.activities.includes('biomedical')) {
+      list.push('Investigator\u2019s brochure or device manual');
+      list.push('Adverse event reporting plan');
+    }
+    if (state.activities.includes('biospecimens')) list.push('Specimen handling, storage, and disposition plan');
+    if (state.activities.includes('ai_subject')) {
+      list.push('AI system documentation: vendor, model, intended use, known limitations');
+      list.push('Disclosure language: how participants will know they are interacting with AI');
+    }
+    if (state.activities.includes('ai_training')) {
+      list.push('Training data provenance and consent basis for that data');
+      list.push('Mitigations against memorisation / data leakage in deployed models');
+    }
+    if (['direct', 'indirect', 'coded'].includes(state.identifiability)) list.push('Data security and management plan');
+    if (state.population.includes('minors')) list.push('Parental permission form, plus age-appropriate assent form');
+    if (state.population.includes('cognitive')) list.push('Capacity assessment procedure and surrogate consent process');
+    if (state.population.includes('indigenous')) list.push('Community consent or partnership documentation');
+    if (state.population.includes('lowresource')) list.push('Translated consent materials and oral consent procedure if literacy is a barrier');
+    list.push('CV and ethics training certificate (CITI in US, equivalents elsewhere)');
+    if (state.jurisdiction === 'multi') list.push('Site approval letters from each external location');
+    return list;
+  }
+  function buildQuestions() {
+    const qs = [
+      'Does this study qualify as human subjects research under the institution\u2019s definition?',
+      'Which review track will it fall into, and what is the typical turnaround?'
+    ];
+    if (state.purpose === 'qi' || state.purpose === 'evaluation') qs.push('Can a "not human subjects research" determination letter be issued?');
+    if (state.dataSource === 'existing' || state.dataSource === 'both') qs.push('Was the original consent broad enough to cover this secondary use, or is a waiver needed?');
+    if (state.population.includes('minors') || state.population.includes('cognitive')) qs.push('What is the preferred assent or surrogate consent template?');
+    if (state.activities.includes('deception')) qs.push('What does an acceptable debriefing process look like for this kind of deception?');
+    if (state.activities.includes('online_data')) qs.push('How does the institution treat publicly accessible online data that participants would not expect to be analysed?');
+    if (state.activities.includes('ai_subject') || state.activities.includes('ai_training')) qs.push('Does the institution have an AI-specific review pathway or supplemental requirements?');
+    if (state.jurisdiction === 'multi') qs.push('Is approval needed at every site, and can a single IRB serve as IRB of record?');
+    if (state.population.includes('own_students') || state.population.includes('patients')) qs.push('How should the power dynamic be addressed in the consent process?');
+    qs.push('What is the expectation for amendments and continuing review during the study?');
+    return qs;
+  }
+  function buildTimeline(result) {
+    const t = [];
+    const v = result.verdict;
+    if (v === 'notneeded') { t.push('No formal review timeline; allow a week or two for institutional acknowledgment if logged.'); return t; }
+    if (v === 'exempt') t.push('Exempt review: typically 1 to 3 weeks once a complete submission is received.');
+    else if (v === 'expedited') t.push('Expedited review: typically 2 to 6 weeks, depending on submission queue and revision rounds.');
+    else if (v === 'fullboard') t.push('Full board review: typically 4 to 12 weeks; the committee meets monthly in most institutions.');
+    else if (v === 'special') t.push('Determination request: usually under 2 weeks for a "not research" letter.');
+    t.push('Build in a buffer for at least one round of revisions; first-time submissions are rarely approved unchanged.');
+    if (state.jurisdiction === 'multi') t.push('Multi-site studies: parallel reviews can run, but the slowest site sets the start date.');
+    if (state.activities.includes('biomedical')) t.push('Biomedical or drug studies often need a regulatory authority approval (FDA / MHRA / DCGI / EMA-aligned) in addition to IRB.');
+    return t;
+  }
+
+  // --- Reviewer items ---
+  function buildReviewerConcerns(result) {
+    const items = [];
+    if (result.flags.length) result.flags.forEach(f => items.push(f.text));
+    if (state.identifiability === 'indirect') items.push('Indirect identifiers: ask whether the data security plan addresses re-identification risk specifically.');
+    if (state.activities.includes('online_data')) items.push('Online data: was contextual integrity considered? Did users post in a setting where they would expect their words to be analysed by researchers?');
+    if (state.population.includes('own_students') || state.population.includes('patients')) items.push('Power dynamic: is recruitment routed through someone other than the PI? Is non-participation explicitly cost-free?');
+    if (state.activities.includes('deception')) items.push('Deception: is the debriefing timed appropriately and does it offer withdrawal of data after debrief?');
+    if (state.activities.includes('ai_subject')) items.push('AI tool: is participant disclosure clear? Is there a fallback when the AI fails or hallucinates?');
+    if (state.activities.includes('ai_training')) items.push('Model training: does consent cover possible release of the trained model and the risk of training data leakage?');
+    if (items.length === 0) items.push('No specific concerns triggered by these answers, but apply standard scrutiny to consent quality and risk-benefit balance.');
+    return items;
+  }
+  function buildReviewerCriteria(result) {
+    const items = [
+      'Risks to subjects are minimised by sound research design and procedures (\u00a746.111(a)(1)).',
+      'Risks are reasonable in relation to anticipated benefits and importance of knowledge (\u00a746.111(a)(2)).',
+      'Selection of subjects is equitable (\u00a746.111(a)(3)); recruitment and exclusion criteria justified.',
+      'Informed consent will be sought from each subject or legally authorised representative (\u00a746.111(a)(4)).',
+      'Informed consent will be appropriately documented (\u00a746.111(a)(5)) or waiver criteria met.',
+      'Data monitoring provisions adequate to ensure subject safety where applicable (\u00a746.111(a)(6)).',
+      'Adequate provisions to protect privacy and confidentiality (\u00a746.111(a)(7)).'
+    ];
+    if (state.population.some(p => ['minors','prisoners','pregnant','cognitive'].includes(p))) {
+      items.push('Additional safeguards for vulnerable populations (\u00a746.111(b)) explicitly addressed in protocol.');
+    }
+    return items;
+  }
+  function buildConsentChecklist() {
+    return [
+      'Concise summary at the start describing key information needed for the decision.',
+      'Statement that the activity is research, with purpose, expected duration, and procedures.',
+      'Description of reasonably foreseeable risks or discomforts.',
+      'Description of any benefits to the subject or to others.',
+      'Disclosure of alternative procedures or treatments, if applicable.',
+      'Statement describing extent to which confidentiality of records will be maintained.',
+      'For greater than minimal risk: explanation of any compensation or available medical treatments.',
+      'Whom to contact for questions about the research and about subjects\u2019 rights.',
+      'Statement that participation is voluntary and refusal involves no penalty or loss of benefits.',
+      'Where applicable, statement about whether identifiers may be removed and used for future research.'
+    ];
+  }
+  function buildCommonRevisions(result) {
+    const items = [
+      'Consent form readability above the population\u2019s reading level (target 8th grade where lay subjects are involved).',
+      'Recruitment language overstating benefits or understating risks.',
+      'Vague description of data storage, retention period, or destruction plan.',
+      'Missing or incomplete debriefing plan when deception is involved.',
+      'Compensation amount disproportionate to time burden, raising coercion concerns.',
+      'Survey instrument or interview guide not actually included in the submission package.'
+    ];
+    if (state.population.includes('minors')) items.push('Assent process not clearly distinguished from parental permission.');
+    if (state.activities.includes('biospecimens')) items.push('Future-use language too broad or too vague to support meaningful broad consent.');
+    if (state.jurisdiction === 'multi') items.push('Cross-border data transfer and local site approval pathway not specified.');
+    if (state.activities.includes('ai_subject') || state.activities.includes('ai_training')) items.push('AI vendor terms of service not included; participants may unknowingly be agreeing to commercial training data use.');
+    return items;
+  }
+
+  // --- Manuscript items ---
+  function buildManuscriptFlags(result) {
+    const items = [];
+    if (state.dataSource === 'primary' || state.dataSource === 'both') {
+      items.push('No statement of IRB / ethics committee approval (name of body, approval number).');
+      items.push('No statement on informed consent process or the basis for any waiver.');
+    }
+    if (state.population.includes('minors')) items.push('Research on minors with no mention of assent and parental permission.');
+    if (state.population.includes('indigenous')) items.push('Indigenous community research with no discussion of community engagement or partnership.');
+    if (state.activities.includes('deception')) items.push('Deception described in methods but no debriefing reported.');
+    if (state.activities.includes('biomedical')) items.push('Clinical study but no trial registration number (e.g., ClinicalTrials.gov, CTRI, ChiCTR) cited.');
+    if (state.identifiability === 'direct' || state.identifiability === 'coded') items.push('Identifiable data with no description of confidentiality protections or data sharing approach.');
+    if (state.activities.includes('ai_subject')) items.push('AI system involved in study procedures but no disclosure to participants reported.');
+    if (state.activities.includes('ai_training')) items.push('Model trained on human data without documented consent basis or data provenance.');
+    if (items.length === 0) items.push('No obvious ethics red flags from this profile, but verify the manuscript actually contains the items listed in the next block.');
+    return items;
+  }
+  function buildManuscriptExpect(result) {
+    const items = [];
+    if (state.dataSource === 'primary' || state.dataSource === 'both' || state.dataSource === 'existing') {
+      items.push('Name of the ethics body that reviewed the protocol and the approval number or date.');
+      items.push('Whether informed consent was obtained, and how (written, oral, electronic), or basis for any waiver.');
+    }
+    if (state.activities.includes('biomedical')) items.push('Clinical trial registration number on a recognised registry, registered before enrollment.');
+    if (state.population.includes('minors')) items.push('Description of the assent process and how parental permission was obtained.');
+    if (state.activities.includes('biospecimens')) items.push('Source of specimens, consent for use, and any future-use provisions.');
+    if (state.activities.includes('online_data')) items.push('Whether the data were genuinely public and whether IRB issued a non-human-subjects determination.');
+    if (state.activities.includes('ai_subject') || state.activities.includes('ai_training')) items.push('AI system documentation, disclosure language, and any model card or datasheet.');
+    items.push('Statement on conflict of interest disclosures and funding source.');
+    items.push('Statement on data availability, with appropriate restrictions where confidentiality requires it.');
+    return items;
+  }
+  function buildManuscriptQueries(result) {
+    const items = [
+      '"Could you specify the name of the ethics committee that approved the study and the approval reference number?"',
+      '"Could you describe how informed consent was obtained, including whether it was written or oral, and whether a copy of the consent form is available for editorial review?"'
+    ];
+    if (state.population.includes('minors')) items.push('"Could you clarify the assent process used for minor participants and how parental permission was documented?"');
+    if (state.activities.includes('deception')) items.push('"Could you describe the debriefing procedure and the rationale provided to the IRB for the use of deception?"');
+    if (state.activities.includes('biomedical')) items.push('"Could you provide the trial registration number and the registration date relative to enrollment?"');
+    if (state.activities.includes('online_data')) items.push('"Could you describe the platform\u2019s terms of service and any user expectations of privacy that informed your IRB review?"');
+    if (state.activities.includes('ai_subject') || state.activities.includes('ai_training')) items.push('"Could you describe how participants were informed about the AI system, and provide any model card or vendor documentation?"');
+    items.push('"Could you confirm that the study followed the Declaration of Helsinki (or equivalent regional framework)?"');
+    return items;
+  }
+  function buildManuscriptEscalation(result) {
+    return [
+      'Authors cannot or will not produce evidence of ethics approval for human subjects research.',
+      'Discrepancy between methods described in the manuscript and what would plausibly have been approved by any competent ethics body.',
+      'Vulnerable populations involved with no apparent safeguards.',
+      'Suspected fabrication of consent or approval documentation.',
+      'Evidence the work is identical to a previously retracted study or a study already published elsewhere.',
+      'Allegations of harm to participants beyond what consent contemplated.',
+      'Use COPE flowcharts (cope.onl/flowcharts) for structured handling, and notify the Editor-in-Chief.'
+    ];
+  }
+  function buildManuscriptStandards() {
+    return [
+      'Declaration of Helsinki (WMA, latest revision 2024) is the international gold standard for medical research ethics.',
+      'ICMJE Recommendations specify that journals should require IRB approval and informed consent statements.',
+      'COPE flowcharts handle suspected research and publication misconduct, including missing ethics approval.',
+      'Belmont Report principles (respect for persons, beneficence, justice) underlie nearly all modern frameworks.',
+      'CIOMS Guidelines (2016) cover health research in low-resource settings, vulnerable populations, biobanking, and cluster trials.',
+      'CONSORT, STROBE, PRISMA, and other reporting guidelines often require ethics statements as part of compliance.'
+    ];
+  }
+
+  // --- Post-approval items ---
+  function buildPostFlags(result) {
+    const items = [];
+    if (result.flags.length) result.flags.forEach(f => items.push(f.text));
+    if (state.changeStatus === 'already' && state.changeType !== 'protocol_minor') {
+      items.push('Implementation occurred before approval. Future approvals may scrutinise the protocol more closely.');
+    }
+    if (state.changeType === 'breach' && state.identifiability !== 'anonymous' && state.identifiability !== 'public') {
+      items.push('Affected participants may need notification depending on what data was exposed.');
+    }
+    if (items.length === 0) items.push('No specific escalators detected. Standard amendment process applies.');
+    return items;
+  }
+  function buildPostDocs(result) {
+    const t = state.changeType;
+    if (t === 'adverse_event') return [
+      'Incident report with timeline of events and outcome',
+      'Updated risk assessment for the protocol',
+      'Proposed protocol modifications if any',
+      'Participant notification plan if other enrolled participants may be affected'
+    ];
+    if (t === 'breach') return [
+      'Breach report: what data, how exposed, who affected, when discovered',
+      'Mitigation steps taken',
+      'Notification plan for affected participants',
+      'Notification to data protection authority where required (GDPR 72 hours, etc.)',
+      'Revised data security plan'
+    ];
+    if (t === 'continuing') return [
+      'Continuing review form (institution-specific)',
+      'Enrollment numbers and accrual data',
+      'Summary of adverse events and protocol deviations since last review',
+      'Updated literature relevant to risk-benefit assessment',
+      'Most recent version of consent form and protocol'
+    ];
+    if (t === 'protocol_deviation') return [
+      'Deviation report: what happened, why, who was affected',
+      'Corrective and preventive action plan',
+      'Updated protocol if procedures need to change'
+    ];
+    if (t === 'consent') return [
+      'Tracked-changes version of consent form',
+      'Clean version of revised consent form',
+      'Plan for re-consenting already-enrolled participants if applicable',
+      'Justification for the change'
+    ];
+    if (t === 'new_population') return [
+      'Justification for adding the population',
+      'Population-specific recruitment materials',
+      'Modified consent / assent / surrogate consent procedures',
+      'Vulnerable population safeguards if applicable'
+    ];
+    // protocol_minor or protocol_major
+    return [
+      'Tracked-changes version of the protocol',
+      'Clean version of the revised protocol',
+      'Updated consent form if changes affect what participants experience',
+      'Brief justification for the change'
+    ];
+  }
+  function buildPostQuestions(result) {
+    const t = state.changeType;
+    const qs = [];
+    if (t === 'adverse_event' || t === 'breach') {
+      qs.push('What is the institution\u2019s required reporting timeframe for this category?');
+      qs.push('Who else needs to be notified beyond the IRB (sponsor, FDA, data protection authority)?');
+    }
+    if (t === 'consent') qs.push('Should already-enrolled participants be re-consented, or is a notification sufficient?');
+    if (t === 'new_population') qs.push('Does this trigger a different review track than the original submission?');
+    if (t === 'continuing') qs.push('Is this study eligible for the 2018 Common Rule continuing-review exception, or does it still need annual re-approval?');
+    if (t === 'protocol_deviation') qs.push('Does this single deviation require a corrective action plan, or are you seeing a pattern?');
+    qs.push('What format does the institution prefer for the submission (online portal, form template, freeform letter)?');
+    return qs;
+  }
+  function buildPostTimeline(result) {
+    const t = state.changeType;
+    if (t === 'adverse_event') return [
+      'Serious or unanticipated events: typically within 10 business days; sooner (24-72 hours) for fatal or life-threatening events.',
+      'Other adverse events: usually summarised at continuing review.'
+    ];
+    if (t === 'breach') return [
+      'IRB notification: typically within 5 to 10 business days.',
+      'GDPR breach notification (EU/UK): 72 hours from awareness where the breach is likely to risk rights and freedoms.',
+      'Affected-participant notification: depends on materiality of the breach.'
+    ];
+    if (t === 'continuing') return [
+      'Submit 4 to 6 weeks before approval expires.',
+      'Lapsed approval halts study activities until re-approved; do not let it expire.'
+    ];
+    if (t === 'protocol_deviation') return [
+      'Report promptly (typically within 10 business days, sooner if safety-relevant).',
+      'Pattern of deviations may trigger an audit; address root cause.'
+    ];
+    if (state.changeRisk === 'adds_major' || t === 'consent' || t === 'new_population' || t === 'protocol_major') return [
+      'Major amendments: 2 to 6 weeks for expedited; 4 to 12 weeks if full board review applies.',
+      'Plan implementation only after approval letter is received.'
+    ];
+    return [
+      'Minor amendments: typically 1 to 3 weeks, sometimes acknowledged within days.',
+      'Some institutions allow notification-only for purely administrative changes; confirm locally.'
+    ];
+  }
+
+  // ---------- Country notes (shared) ----------
+  function buildCountry() {
+    const j = state.jurisdiction;
+    const map = {
+      us: [
+        'Common Rule at 45 CFR 46 (Subpart A), revised 2018, effective January 21, 2019; 21 CFR 50/56 for FDA-regulated research.',
+        'Eight exempt categories under \u00a746.104(d)(1)\u2013(8). The IRB makes the determination; researchers cannot self-exempt.',
+        'Limited IRB review applies to certain exempt categories (notably 2(iii), 3, 7, and 8) per \u00a746.104(d) and \u00a746.111(a)(7).',
+        'CITI Program training is the de facto standard at most institutions.'
+      ],
+      uk: [
+        'Two-track system: HRA (Health Research Authority) for NHS research; university Research Ethics Committees (RECs) for non-NHS work.',
+        'The HRA decision tools at hra.nhs.uk help determine whether HRA approval applies.',
+        'Clinical trials of investigational medicinal products (CTIMPs) fall under MHRA in addition to ethics review.',
+        'UK GDPR and the Data Protection Act 2018 govern personal data; ICO breach notification within 72 hours where rights and freedoms are at risk.'
+      ],
+      eu: [
+        'No single EU-wide ethics body; each member state runs its own framework.',
+        'GDPR (Regulation 2016/679) applies to all personal data processing, regardless of ethics review status.',
+        'Clinical Trials Regulation 536/2014 harmonises pharmaceutical trials across member states (CTIS portal).',
+        'GDPR Article 33: notify supervisory authority within 72 hours of becoming aware of a personal data breach where feasible.',
+        'Cross-border studies often need approval at the institutional level in each participating country.'
+      ],
+      ca: [
+        'Tri-Council Policy Statement (TCPS 2, 2022) governs research ethics for federally funded research.',
+        'Research Ethics Boards (REBs) at each institution conduct review.',
+        'Article 2.5 explicitly removes QA, QI, program evaluation, and performance reviews from the scope of REB review (they are not research).',
+        'TCPS 2 Chapter 9 lays out specific provisions for research involving Indigenous peoples; community engagement is foundational.'
+      ],
+      au: [
+        'National Statement on Ethical Conduct in Human Research, jointly issued by NHMRC, ARC, and Universities Australia (most recent update 2023).',
+        'Reviewed by Human Research Ethics Committees (HRECs) at institutions.',
+        'A negligible-risk pathway exists for very low-risk research and may be reviewed outside the HREC.',
+        'AIATSIS Code of Ethics for Aboriginal and Torres Strait Islander Research (2020) applies in addition to the National Statement.'
+      ],
+      in: [
+        'ICMR National Ethical Guidelines for Biomedical and Health Research Involving Human Participants (2017) is the reference standard.',
+        'Institutional Ethics Committees (IECs) for biomedical and health research must register with DHR (Department of Health Research) under the New Drugs and Clinical Trials Rules 2019, via the Naitik portal.',
+        'CDSCO/DCGI separately regulates clinical trials of new drugs (Schedule Y procedures, now under NDCT Rules 2019).',
+        'Clinical Trials Registry-India (CTRI) registration is mandatory before enrollment of the first participant.',
+        'A separate social and behavioural research pathway exists within the ICMR guidelines.'
+      ],
+      cn: [
+        'NHC Measures for Ethical Review of Life Sciences and Medical Research Involving Humans (issued February 18, 2023, by the National Health Commission).',
+        'MOST Trial Measures for Scientific and Technological Ethics Review (issued September 7, 2023, effective December 1, 2023) cover the broader research enterprise including AI and algorithms.',
+        'Both frameworks apply in parallel; the 2016 measures have not been formally repealed in all respects.',
+        'Genetic research and biospecimen export face additional restrictions under the Human Genetic Resources Regulations.',
+        'Cross-border data transfers face separate review under the Personal Information Protection Law (PIPL).'
+      ],
+      br: [
+        'CEP/CONEP system: local Research Ethics Committees (CEPs) review most studies; CONEP handles special categories.',
+        'All research involving humans must be submitted via Plataforma Brasil.',
+        'Resolution CNS 466/2012 covers biomedical research; Resolution CNS 510/2016 covers social sciences and humanities (with adapted procedures).',
+        'Lei 14.874/2024 establishes a new statutory framework for clinical research with humans, complementing the CNS resolutions.',
+        'CONEP review is required for international research, indigenous populations, genetics, and other special categories.'
+      ],
+      multi: [
+        'Cross-border research: each jurisdiction may require its own ethics review.',
+        'Single IRB / single REC arrangements (where one body serves as the review of record) are increasingly accepted but not universal.',
+        'Data transfer rules vary widely; GDPR (EU), PIPL (China), and US sectoral laws can all apply simultaneously.',
+        'Plan extra time and consider engaging a research ethics specialist familiar with all applicable jurisdictions.'
+      ],
+      other: [
+        'Underlying principles tend to be consistent across frameworks: informed consent, risk minimisation, vulnerable population protection, data confidentiality.',
+        'Identify the country\u2019s national framework and the institutional body that reviews research.',
+        'Check whether the work requires registration with a national clinical trials registry or data protection authority.',
+        'When publishing internationally, journal standards (ICMJE, Declaration of Helsinki) may exceed the local framework; meet the higher bar.'
+      ]
+    };
+    return map[j] || map.other;
+  }
+
+  // ---------- Copy & download ----------
+  $('#copyAllBtn').addEventListener('click', async () => {
+    if (!window.__lastReport) return;
+    const txt = formatPlain();
+    try { await navigator.clipboard.writeText(txt); toast('Copied to clipboard'); }
+    catch (e) { toast('Copy failed'); }
+  });
+  $('#downloadBtn').addEventListener('click', () => {
+    const txt = formatPlain();
+    const blob = new Blob([txt], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'irb-triage-' + state.mode + '.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  function formatPlain() {
+    const r = window.__lastReport;
+    if (!r) return '';
+    const lines = [];
+    lines.push('IRB TRIAGE REPORT (' + r.mode.toUpperCase() + ' MODE)');
+    lines.push('=================================================');
+    lines.push('');
+    lines.push('VERDICT: ' + r.result.headline);
+    lines.push(r.result.sub);
+    lines.push('');
+    lines.push('YOUR ANSWERS');
+    lines.push('------------');
+    lines.push('Jurisdiction: ' + state.jurisdiction);
+    if (r.mode === 'postapproval') {
+      lines.push('Change type: ' + (state.changeType || 'unanswered'));
+      lines.push('Implementation status: ' + (state.changeStatus || 'unanswered'));
+      lines.push('Risk impact: ' + (state.changeRisk || 'unanswered'));
+    } else {
+      lines.push('Purpose: ' + (state.purpose || 'unanswered'));
+      lines.push('Data source: ' + (state.dataSource || 'unanswered'));
+      lines.push('Activities: ' + (state.activities.join(', ') || 'unanswered'));
+      lines.push('Population: ' + (state.population.join(', ') || 'unanswered'));
+      lines.push('Identifiability: ' + (state.identifiability || 'unanswered'));
+      lines.push('Sensitivity: ' + (state.sensitivity.join(', ') || 'unanswered'));
+      lines.push('Risk: ' + (state.risk || 'unanswered'));
+    }
+    lines.push('');
+    r.blocks.forEach(b => {
+      lines.push(b.title.toUpperCase());
+      lines.push('-'.repeat(b.title.length));
+      b.items.forEach(it => lines.push('- ' + it));
+      lines.push('');
+    });
+    lines.push('---');
+    lines.push('Generated by The IRB Triage. Concept and curation by Prof. Babu George.');
+    lines.push('This is a self-assessment, not an institutional determination.');
+    return lines.join('\n');
+  }
+
+  function toast(msg) {
+    const t = $('#toast');
+    t.textContent = msg;
+    t.classList.add('shown');
+    setTimeout(() => t.classList.remove('shown'), 1800);
+  }
+
+  // ---------- Share link (state in URL hash) ----------
+  $('#shareBtn').addEventListener('click', async () => {
+    const params = new URLSearchParams();
+    params.set('m', state.mode);
+    params.set('j', state.jurisdiction);
+    if (state.purpose) params.set('p', state.purpose);
+    if (state.dataSource) params.set('d', state.dataSource);
+    if (state.activities.length) params.set('a', state.activities.join(','));
+    if (state.population.length) params.set('pop', state.population.join(','));
+    if (state.identifiability) params.set('i', state.identifiability);
+    if (state.sensitivity.length) params.set('s', state.sensitivity.join(','));
+    if (state.risk) params.set('r', state.risk);
+    if (state.changeType) params.set('ct', state.changeType);
+    if (state.changeStatus) params.set('cs', state.changeStatus);
+    if (state.changeRisk) params.set('cr', state.changeRisk);
+    const url = location.origin + location.pathname + '#' + params.toString();
+    try { await navigator.clipboard.writeText(url); toast('Share link copied'); }
+    catch (e) {
+      // fallback: try execCommand
+      const ta = document.createElement('textarea');
+      ta.value = url;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); toast('Share link copied'); } catch (_) { toast('Copy failed; URL is in the address bar'); location.hash = params.toString(); }
+      document.body.removeChild(ta);
+    }
+  });
+
+  function loadFromHash() {
+    if (!location.hash || location.hash.length < 2) return;
+    try {
+      const params = new URLSearchParams(location.hash.slice(1));
+      if (params.has('m')) setMode(params.get('m'));
+      if (params.has('j')) { state.jurisdiction = params.get('j'); $('#jurisdiction').value = state.jurisdiction; }
+      const setRadio = (name, val) => { if (val) { const i = document.querySelector(`input[name="${name}"][value="${val}"]`); if (i) i.checked = true; state[name] = val; } };
+      const setMulti = (name, valStr) => {
+        if (!valStr) return;
+        const vals = valStr.split(',');
+        vals.forEach(v => { const i = document.querySelector(`input[name="${name}"][value="${v}"]`); if (i) i.checked = true; });
+        state[name] = vals;
+      };
+      setRadio('purpose', params.get('p'));
+      setRadio('dataSource', params.get('d'));
+      setMulti('activities', params.get('a'));
+      setMulti('population', params.get('pop'));
+      setRadio('identifiability', params.get('i'));
+      setMulti('sensitivity', params.get('s'));
+      setRadio('risk', params.get('r'));
+      setRadio('changeType', params.get('ct'));
+      setRadio('changeStatus', params.get('cs'));
+      setRadio('changeRisk', params.get('cr'));
+      update();
+      setTimeout(() => {
+        const result = assess();
+        renderReport(result);
+        $('#report').classList.add('shown');
+      }, 100);
+    } catch (e) { /* malformed hash, ignore */ }
+  }
+
+  // ---------- Scenarios with categories ----------
+  const scenarios = [
+    // Behavioural / social
+    { title: 'Survey of Study Habits', desc: 'Anonymous online survey of US college students.', category: 'behavioural', mode: 'researcher',
+      data: { jurisdiction: 'us', purpose: 'research', dataSource: 'primary', activities: ['survey'], population: ['general'], identifiability: 'anonymous', sensitivity: ['none'], risk: 'minimal' } },
+    { title: 'Course-Based Project', desc: 'Methods class assignment, no publication planned.', category: 'behavioural', mode: 'researcher',
+      data: { jurisdiction: 'us', purpose: 'classroom', dataSource: 'primary', activities: ['survey'], population: ['general'], identifiability: 'anonymous', sensitivity: ['none'], risk: 'minimal' } },
+    { title: 'Dissertation Interviews', desc: 'In-depth interviews on workplace stress in India.', category: 'behavioural', mode: 'researcher',
+      data: { jurisdiction: 'in', purpose: 'research', dataSource: 'primary', activities: ['interview', 'recording'], population: ['general'], identifiability: 'coded', sensitivity: ['mental_health'], risk: 'slightly_above' } },
+    { title: 'Autoethnography', desc: 'Self-study of own teaching practice; no other participants.', category: 'behavioural', mode: 'researcher',
+      data: { jurisdiction: 'us', purpose: 'research', dataSource: 'nohumans', activities: [], population: ['general'], identifiability: 'public', sensitivity: ['none'], risk: 'minimal' } },
+
+    // Healthcare / biomedical
+    { title: 'Hospital QI Project', desc: 'Reducing wait times in a single-site clinic.', category: 'healthcare', mode: 'researcher',
+      data: { jurisdiction: 'us', purpose: 'qi', dataSource: 'existing', activities: [], population: ['patients'], identifiability: 'coded', sensitivity: ['none'], risk: 'minimal' } },
+    { title: 'Phase II Drug Trial', desc: 'Investigational compound for adult patients.', category: 'healthcare', mode: 'researcher',
+      data: { jurisdiction: 'us', purpose: 'research', dataSource: 'primary', activities: ['biomedical'], population: ['patients'], identifiability: 'direct', sensitivity: ['stigmatized_health'], risk: 'substantial' } },
+    { title: 'EHR Secondary Analysis', desc: 'Mining electronic health records for risk patterns.', category: 'healthcare', mode: 'researcher',
+      data: { jurisdiction: 'us', purpose: 'research', dataSource: 'existing', activities: [], population: ['patients'], identifiability: 'coded', sensitivity: ['stigmatized_health'], risk: 'minimal' } },
+    { title: 'Genetic Biobank Study', desc: 'Future-use consent for biospecimens.', category: 'healthcare', mode: 'researcher',
+      data: { jurisdiction: 'us', purpose: 'research', dataSource: 'primary', activities: ['biospecimens'], population: ['general'], identifiability: 'coded', sensitivity: ['genetic'], risk: 'slightly_above' } },
+
+    // AI / digital
+    { title: 'Chatbot Mental Health Pilot', desc: 'AI assistant supporting peer counsellors. Echoes the Koko case.', category: 'ai', mode: 'researcher',
+      data: { jurisdiction: 'us', purpose: 'research', dataSource: 'primary', activities: ['ai_subject', 'experiment'], population: ['general'], identifiability: 'coded', sensitivity: ['mental_health'], risk: 'slightly_above' } },
+    { title: 'LLM Trained on Patient Notes', desc: 'Fine-tuning a model on de-identified clinical text.', category: 'ai', mode: 'researcher',
+      data: { jurisdiction: 'us', purpose: 'research', dataSource: 'existing', activities: ['ai_training'], population: ['patients'], identifiability: 'deidentified', sensitivity: ['stigmatized_health'], risk: 'minimal' } },
+    { title: 'Algorithmic Decision Audit', desc: 'Studying bias in a hiring algorithm; analysing logs.', category: 'ai', mode: 'researcher',
+      data: { jurisdiction: 'us', purpose: 'research', dataSource: 'existing', activities: ['ai_training', 'online_data'], population: ['general'], identifiability: 'indirect', sensitivity: ['none'], risk: 'minimal' } },
+    { title: 'Reddit Ethnography', desc: 'Analysing public posts on a parenting subreddit.', category: 'ai', mode: 'researcher',
+      data: { jurisdiction: 'us', purpose: 'research', dataSource: 'existing', activities: ['online_data', 'observation_public'], population: ['general'], identifiability: 'public', sensitivity: ['none'], risk: 'minimal' } },
+
+    // Cross-border / community
+    { title: 'Cross-Border Survey', desc: 'Same survey across the US and India.', category: 'global', mode: 'researcher',
+      data: { jurisdiction: 'multi', purpose: 'research', dataSource: 'primary', activities: ['survey', 'interview'], population: ['general'], identifiability: 'coded', sensitivity: ['political'], risk: 'slightly_above' } },
+    { title: 'Indigenous Community Study', desc: 'Cultural practices research in Canada.', category: 'global', mode: 'researcher',
+      data: { jurisdiction: 'ca', purpose: 'research', dataSource: 'primary', activities: ['interview', 'observation_public', 'recording'], population: ['indigenous'], identifiability: 'coded', sensitivity: ['none'], risk: 'slightly_above' } },
+    { title: 'Refugee Health Survey', desc: 'Health needs assessment in a refugee camp.', category: 'global', mode: 'researcher',
+      data: { jurisdiction: 'multi', purpose: 'research', dataSource: 'primary', activities: ['survey', 'interview'], population: ['refugees', 'lowresource'], identifiability: 'coded', sensitivity: ['immigration', 'stigmatized_health'], risk: 'greater' } },
+    { title: 'Citizen Science Bird Counts', desc: 'Volunteers report bird sightings via app.', category: 'global', mode: 'researcher',
+      data: { jurisdiction: 'us', purpose: 'research', dataSource: 'primary', activities: ['observation_public'], population: ['general'], identifiability: 'anonymous', sensitivity: ['none'], risk: 'minimal' } },
+
+    // Edge cases
+    { title: 'Oral History Interviews', desc: 'Interviews with civil rights movement participants.', category: 'edge', mode: 'researcher',
+      data: { jurisdiction: 'us', purpose: 'journalism', dataSource: 'primary', activities: ['interview', 'recording'], population: ['general'], identifiability: 'direct', sensitivity: ['political'], risk: 'minimal' } },
+    { title: 'Investigative Journalism', desc: 'Reporting on a corporate scandal; not for publication as research.', category: 'edge', mode: 'researcher',
+      data: { jurisdiction: 'us', purpose: 'journalism', dataSource: 'primary', activities: ['interview'], population: ['general'], identifiability: 'direct', sensitivity: ['illegal'], risk: 'slightly_above' } },
+    { title: 'Mixed QI / Research', desc: 'Internal QI now planned for publication.', category: 'edge', mode: 'researcher',
+      data: { jurisdiction: 'us', purpose: 'mixed', dataSource: 'existing', activities: [], population: ['patients'], identifiability: 'coded', sensitivity: ['none'], risk: 'minimal' } },
+
+    // Post-approval
+    { title: 'Post-approval: Add a Site', desc: 'Major amendment scenario.', category: 'post', mode: 'postapproval',
+      data: { jurisdiction: 'us', changeType: 'protocol_major', changeStatus: 'planned', changeRisk: 'adds_minor' } },
+    { title: 'Post-approval: Lost Laptop', desc: 'Confidentiality breach scenario.', category: 'post', mode: 'postapproval',
+      data: { jurisdiction: 'eu', changeType: 'breach', changeStatus: 'already', changeRisk: 'adds_major' } },
+    { title: 'Post-approval: Added Question', desc: 'Minor consent change.', category: 'post', mode: 'postapproval',
+      data: { jurisdiction: 'us', changeType: 'consent', changeStatus: 'planned', changeRisk: 'adds_minor' } },
+    { title: 'Post-approval: Continuing Review', desc: 'Annual re-approval due.', category: 'post', mode: 'postapproval',
+      data: { jurisdiction: 'us', changeType: 'continuing', changeStatus: 'planned', changeRisk: 'none' } }
+  ];
+
+  const categories = [
+    { key: 'all', label: 'All' },
+    { key: 'behavioural', label: 'Behavioural / Social' },
+    { key: 'healthcare', label: 'Healthcare' },
+    { key: 'ai', label: 'AI / Digital' },
+    { key: 'global', label: 'Cross-border / Community' },
+    { key: 'edge', label: 'Edge cases' },
+    { key: 'post', label: 'Post-approval' }
+  ];
+  let activeCategory = 'all';
+
+  function renderScenarioFilter() {
+    const f = $('#scenFilter');
+    f.innerHTML = categories.map(c =>
+      `<button data-cat="${c.key}" class="${c.key === activeCategory ? 'active' : ''}">${escapeHtml(c.label)}</button>`
+    ).join('');
+    $$('button', f).forEach(btn => {
+      btn.addEventListener('click', () => {
+        activeCategory = btn.dataset.cat;
+        renderScenarioFilter();
+        renderScenarios();
+      });
+    });
+  }
+  function renderScenarios() {
+    const grid = $('#scenGrid');
+    const filtered = activeCategory === 'all' ? scenarios : scenarios.filter(s => s.category === activeCategory);
+    grid.innerHTML = filtered.map(s => {
+      const i = scenarios.indexOf(s);
+      return `<button class="scen-card" type="button" data-scen="${i}">
+        <div class="t">${escapeHtml(s.title)}</div>
+        <div class="b">${escapeHtml(s.desc)}</div>
+        <div class="cat">${escapeHtml(categories.find(c => c.key === s.category).label)}</div>
+      </button>`;
+    }).join('');
+    $$('.scen-card').forEach(card => {
+      card.addEventListener('click', () => loadScenario(Number(card.dataset.scen)));
+    });
+  }
+  function loadScenario(i) {
+    const s = scenarios[i];
+    if (!s) return;
+    if (s.mode && s.mode !== state.mode) setMode(s.mode);
+    Object.assign(state, s.data);
+    $$('input[type="radio"], input[type="checkbox"]').forEach(inp => { inp.checked = false; });
+    $('#jurisdiction').value = state.jurisdiction;
+    ['purpose', 'dataSource', 'identifiability', 'risk', 'changeType', 'changeStatus', 'changeRisk'].forEach(field => {
+      if (state[field]) {
+        const inp = document.querySelector(`input[name="${field}"][value="${state[field]}"]`);
+        if (inp) inp.checked = true;
+      }
+    });
+    ['activities', 'population', 'sensitivity'].forEach(field => {
+      (state[field] || []).forEach(v => {
+        const inp = document.querySelector(`input[name="${field}"][value="${v}"]`);
+        if (inp) inp.checked = true;
+      });
+    });
+    update();
+    const result = assess();
+    renderReport(result);
+    $('#report').classList.add('shown');
+    setTimeout(() => $('#report').scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+  }
+
+  // ---------- Common deficiencies database ----------
+  const deficiencies = [
+    { title: 'Consent form readability above target level', tags: ['consent', 'all'], body: 'Common when a research-trained author writes for participants. Aim for 8th grade reading level for general adult populations; lower for vulnerable groups. Use Flesch-Kincaid or similar tools to check.' },
+    { title: 'Vague data destruction timeline', tags: ['data', 'security', 'all'], body: 'Saying "data will be destroyed when no longer needed" doesn\u2019t commit to anything. Specify a duration (e.g., "5 years after study close, identifiers removed; de-identified data retained indefinitely").' },
+    { title: 'Recruitment script overstating benefits', tags: ['consent', 'recruitment'], body: 'Promising "benefits" that are not directly tied to participation. The IRB will want benefits framed accurately, distinguishing personal benefit from contribution to knowledge.' },
+    { title: 'Compensation creates undue inducement', tags: ['consent', 'compensation', 'vulnerable'], body: 'Compensation should be reasonable for time and effort, not so large it overrides good judgment. Particularly fraught for low-income or low-resource settings.' },
+    { title: 'Survey instrument missing from submission', tags: ['documents', 'survey'], body: 'IRBs cannot assess what they cannot see. Include the actual instrument, not just a description. Web-based surveys: include the consent screen and final question flow.' },
+    { title: 'Debriefing for deception missing or vague', tags: ['deception', 'consent'], body: 'When deception is used, the debriefing must be detailed: when it occurs, what is disclosed, opportunity to withdraw data, and follow-up resources if the deception caused distress.' },
+    { title: 'Indirect identifier risk underestimated', tags: ['data', 'identifiability', 'security'], body: 'Combining ZIP, age, and gender alone can identify many individuals in small populations. Address re-identification risk with k-anonymity, generalisation, or cell-size suppression.' },
+    { title: 'Future-use consent too broad to be meaningful', tags: ['consent', 'biobank', 'biospecimens'], body: 'Consent for "any future research" is hard to defend ethically. Broad consent under \u00a746.116(d) requires specific elements; biobanks should consider tiered consent.' },
+    { title: 'Online data: terms of service not reviewed', tags: ['online', 'social_media', 'ai'], body: 'Many platforms prohibit scraping or unauthorised analysis. Even when data is "public," ToS compliance is part of the ethics picture.' },
+    { title: 'Contextual integrity ignored', tags: ['online', 'social_media', 'privacy'], body: 'Data shared in one context (a support group on Reddit) may be technically public but not appropriate for analysis without considering user expectations.' },
+    { title: 'Cross-border data transfer not addressed', tags: ['global', 'gdpr', 'data'], body: 'Moving data from EU/UK to other jurisdictions requires a legal mechanism (SCCs, adequacy decision, derogation). Plan and document the transfer basis.' },
+    { title: 'Vulnerable population without rationale', tags: ['vulnerable', 'justice'], body: 'Including a vulnerable group requires justification: why this group, why now, what additional safeguards. "Convenience" is not a justification.' },
+    { title: 'Power dynamic in recruitment', tags: ['consent', 'students', 'patients'], body: 'When the PI has power over potential participants (instructor, supervisor, treating clinician), recruitment should be routed through someone neutral, and non-participation must clearly carry no penalty.' },
+    { title: 'Assent / parental permission conflated', tags: ['minors', 'consent'], body: 'Assent is the child\u2019s agreement; permission is the parent\u2019s. Different documents, different processes, different ages. Most frameworks require both.' },
+    { title: 'AI involvement undisclosed to participants', tags: ['ai', 'consent', 'disclosure'], body: 'When AI mediates the study (chatbot, decision support, generative content), participants should typically know. The Koko case shows what happens when they find out later.' },
+    { title: 'Model training data provenance unclear', tags: ['ai', 'data'], body: 'Consent for the original data may not have contemplated training a model. Document what consent permits, and whether new consent is needed for model training or release.' },
+    { title: 'Memorisation risk in trained models', tags: ['ai', 'privacy'], body: 'Models can memorise training data, including identifying information. Mitigation includes differential privacy, careful evaluation against extraction attacks, and access controls.' },
+    { title: 'Trial registration after enrollment began', tags: ['biomedical', 'registration'], body: 'ICMJE requires prospective registration. Registration after enrollment is a publication red flag and can delay or block manuscript acceptance.' },
+    { title: 'Adverse event timeline noncompliant', tags: ['post-approval', 'biomedical', 'reporting'], body: 'Different institutions and regulators have different timelines. Serious unanticipated events typically need reporting within 10 business days; fatal events within 24-72 hours.' },
+    { title: 'Continuing review lapsed', tags: ['post-approval', 'review'], body: 'Even if you are eligible for the 2018 Common Rule continuing-review exception, lapsed approval halts study activities. Submit 4-6 weeks before expiration.' },
+    { title: 'Data sharing plan absent', tags: ['data', 'publication', 'reporting'], body: 'Many funders (NIH 2023 Data Management and Sharing Policy) and journals now require explicit data sharing plans. Address what will be shared, where, and with what restrictions.' },
+    { title: 'Indigenous community consent omitted', tags: ['indigenous', 'community', 'global'], body: 'Individual consent doesn\u2019t replace community consent. TCPS 2 Chapter 9 (Canada) and AIATSIS (Australia) require engagement at the community level, not just the individual.' },
+    { title: 'Recording consent underspecified', tags: ['consent', 'recording'], body: 'Audio/video consent should specify retention, transcription, who has access, and any planned reuse (teaching, derivative work, public archive).' },
+    { title: 'Conflict of interest not disclosed', tags: ['publication', 'all'], body: 'Authors, IRB members, and reviewers all face COI obligations. Disclose financial interests, employment ties, and any role in commercial entities related to the work.' },
+    { title: 'Jurisdiction confusion in multi-site work', tags: ['global', 'review'], body: 'Researchers sometimes assume one IRB approval covers all sites. Most often it does not. Confirm whether single IRB / single REC arrangements apply, and document each site\u2019s status.' }
+  ];
+
+  function renderDeficiencies(filter = '') {
+    const list = $('#defList');
+    const f = filter.trim().toLowerCase();
+    const matched = !f ? deficiencies : deficiencies.filter(d =>
+      d.title.toLowerCase().includes(f) ||
+      d.body.toLowerCase().includes(f) ||
+      d.tags.some(t => t.includes(f))
+    );
+    if (matched.length === 0) {
+      list.innerHTML = '<div class="def-empty">No matches. Try a broader term, or browse without a filter.</div>';
+      return;
+    }
+    list.innerHTML = matched.map(d => `
+      <div class="def-item">
+        <div class="def-tags">${d.tags.map(t => `<span>${escapeHtml(t)}</span>`).join('')}</div>
+        <div class="def-title">${escapeHtml(d.title)}</div>
+        <div class="def-body">${escapeHtml(d.body)}</div>
+      </div>
+    `).join('');
+  }
+
+  $('#defSearch').addEventListener('input', e => renderDeficiencies(e.target.value));
+
+  // ---------- utils ----------
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  }
+
+  // ---------- init ----------
+  renderScenarioFilter();
+  renderScenarios();
+  renderDeficiencies();
+  update();
+  loadFromHash();
+})();
+</script>
+</body>
+</html>
